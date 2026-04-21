@@ -1,0 +1,16 @@
+\addtocontents{toc}{\protect\newpage}
+\section{\MakeUppercase{Computational Methods}} 
+\label{sec:Deepdiffusion}
+
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+
+
+A few computational techniques exist for transferring quantities from between cells.
+These methods -- Finite Difference, Finite Volume, and Smooth Particle Hydrodynamics -- excel at capturing different aspects of fluid flow.
+
+A supernova expanding into a dense medium will generate an extremely strong shock.
+The Finite Volume method is particularly well-suited for this situation because it is designed to conserve the flux of quantities between cells via the Riemann problem.
+Since the grid is discretized, neighboring cells contain different quantities. The difference in a quantity like density may be relatively small, but the interface between these cells produces discontinuity.
+The way this system evolves in time and quantities are exchanged between the cells can be solved using the Riemann problem in a conserved manner.
+Thus, the Finite Volume method excels at handling shock waves formed in supersonic flows while retaining numerical stability since the problem at hand is built into the method.

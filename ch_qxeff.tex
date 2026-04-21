@@ -1,0 +1,956 @@
+\addtocontents{toc}{\protect}
+\section{\texorpdfstring{\MakeUppercase{active galactic nuclear accretion disk influence on the mass ratio and effective spin plane}}{active galactic nuclear accretion disk influence on the mass ratio and effective spin plane}}
+\label{sec:qXeff}
+
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+
+\par The model and results described in this chapter were produced using the \mcfacts code that was initially published in a series of papers \mcfacts \code{I}
+\citep{McKernan+25-mcfactsI}, \mcfacts \code{II} \citep{Cook+25}, and \mcfacts \code{III} \citep{Delfavero+25-mcfactsIII} in the \textit{Astrophysical Journal}.
+The bulk of this chapter is directly informed by the content of \citet{Cook+25}, my primary scientific contribution, with my contributions to the other papers mixed in.
+I will also briefly summarize the first paper in the series, \citet{McKernan+25-mcfactsI}, for algorithmic reasons and in the capacity that pertains to my work.
+Please refer to \citet{McKernan+25-mcfactsI} for specific model details and \citet{Delfavero+25-mcfactsIII} for results related to a cosmologically informed galaxy population.
+
+\subsection{Motivation}
+
+Here we present a study using the \mcfacts code \citep{McKernan+25-mcfactsI, Cook+25, Delfavero+25-mcfactsIII} to test the predictions of the AGN channel for the $q$--$\Xeff$ distribution across a wide range of parameter space in both AGN disk and NSC models, with a view to tightly constraining requirements on the AGN channel.
+The assumptions we vary include the BH initial mass function (IMF), disk model, disk size, disk lifetime, NSC model, and the prograde-to-retrograde fraction of newly formed black hole binaries.
+\mcfacts features substantial improvements to the Monte Carlo code used in \citet{McKernan+20a} to explore $\Xeff$ of mergers in AGN and \citet{McKernan+22:q-Xeff} who explored the $q$--$\Xeff$ anti-correlation.
+The greater flexibility for exploring parameter space includes many improved models for disk-NSC interactions such as dynamical encounters, orbital migration, and binary evolution.
+Broadly we find that dense, moderately short-lived AGN disks are preferred for producing an anti-correlation between the mass ratio $q$ and effective spin $\Xeff$ like has been identified from existing GW observations.
+Additionally, when populating the disk with BHs from the IMF, the likelihood of drawing a given BH with mass $M$, we find a preference for $p(M) \propto M^{-2}$ over a more top-heavy IMF ($M^{-1}$).
+The preferred fraction of prograde-to-retrograde is $>90\%$, to produce results consistent with observations.
+
+
+
+\subsection{Background}
+\label{sec:background-qxeff}
+GW observations provide information about each component mass and spin for a given BBH merger.
+In this work, we will focus on two specific BBH parameters: the binary mass ratio $q=M_2/M_1\ (M_1>M_2)$, where $M_{1}$ and $M_{2}$ are the primary and secondary BH masses; and effective spin of the BBH as given by 
+\begin{equation}
+\label{eqn:Xeff}
+	\Xeff = \frac{M_{1}\vec{\chi}_{1} + M_{2} \vec{\chi}_{2}}{M_{1}+M_{2}}\cdot \hat{\vec{L}}_\text{bin}
+\end{equation}
+where $\vec{\chi}_{1,2}$ are the dimensionless spin parameters associated with $M_{1},M_{2}$ respectively and $\hat{\vec{L}}_\text{bin}$ is the direction of the orbital angular momentum vector of the BBH.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\textwidth]{ch_qxeff_figs/xeff-diagram-eqns.pdf}
+	\caption[Effective Spin Diagram]{Diagram of the components in Eq.~\ref{eqn:Xeff} needed to calculate the effective spin $\Xeff$ measured for a merger event.}
+	\label{fig:xeff-cartoon}
+\end{figure}
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=1\textwidth]{ch_qxeff_figs/santini+23_qxeff_channels.pdf}
+	\caption[The $q$--$\Xeff$ plane for different formation channels]{The $q$--$\Xeff$ distributions for BBH mergers originating in various binary formation channels.
+	\emph{Left:} Isolated field binary stars.
+	\emph{Left of center:} Globular clusters.
+	\emph{Right of center:} AGN disks with retrograde and prograde binary angular momenta.
+	\emph{Right:} AGN disks with only prograde binary angular momenta.
+	Figure taken from \citet{Santini+23}.
+	}
+	\label{fig:qxeff-channels}
+\end{figure}
+
+There are several formation channels for forming BBH.
+\citet{Santini+23} explored how the $q$--$\Xeff$ plane would appear like for three possible formation scenarios shown in \Fig{fig:qxeff-channels}, which is reproduced from their paper.
+The left panel shows this for binary stellar companions whose orbits are close enough to experience periods of common-envelope evolution, that cause their orbits to shrink enough for GW radiation to shrink their orbits further.
+In this scenario it is most likely that both stars formed from the same molecular cloud and have parallel rotational angular momentum which restricts $\Xeff$ to be positive.
+Another common pathway for BBH formation is through dynamical interactions in globular clusters and NSCs shown in the left-of-center panel.
+In these environments stars and black holes frequently encounter each other, exchanging partners, and shrinking their orbits, again, until GW radiation takes over.
+Binaries formed here will have randomly oriented spins, and $\Xeff$ can be either negative or positive but will be evenly distributed about $\Xeff=0$.
+As discussed in the previous chapter, the presence of an accretion disk will align orbits of NSC objects to be fully embedded within its confines over time \citep{Fabj+20,Nasim+22}.
+Thus, when binaries form due to encounters along similar trajectories, $\hat{\vec{L}}_\text{bin}$ will preferentially align with the disk orbital angular momentum, causing $\Xeff$ to be more restricted than when no disk is present despite the fact that $\vec{\chi}_i$ for any newly captured BH will be randomly oriented, as shown in the right panels.
+Since merger remnants primarily inherit their spins from $\hat{\vec{L}}_\text{bin}$, $\Xeff$ becomes progressively more aligned or anti-aligned with the disk depending on whether both prograde $\hat{\vec{L}}_\text{bin} \cdot \hat{\vec{L}}_\text{disk} = +1$ and retrograde $\hat{\vec{L}}_\text{bin} \cdot \hat{\vec{L}}_\text{disk} = -1$ or only prograde binaries form.
+Merger remnants in dynamical channels are more likely to merge again in what is called a hierarchical merger scenario, each time increasing their mass and spin, which is reflected in the wider distribution in $\Xeff$ at low $q$ since more massive BHs are more likely to capture less massive companions.
+
+
+Throughout this chapter we will refer to a BH that formed through stellar evolution processes as a first generation, or a 1g, BH.
+Each merger event increases the generation of the highest generation component by one such that a 2g$-$4g merger event produces a 5g remnant.
+We categorize merger events into three groups based on the generations of the BH involved: (1) 1g mergers between first generation BH (1g-1g), (2) 2g mergers involving second generation BH (2g-1g and 2g-2g), and (3) $\geq$3g mergers involving a third generation BH or higher (3g-Ng).
+
+For intuition in what follows, the range of $q$ among first generation (1g; BH produced via stellar evolution) mergers will depend on the range of the IMF (e.g., $10\leq M/\Msun \leq 40$) as well as the power-law of the mass distribution ($\propto M^{-\gamma}$).
+A steeper mass function with $\gamma = 2$ biases the distribution towards lower mass BH and therefore implies a bias towards $q \sim 1$ as binaries are more likely to form between similar mass BH.
+A shallower mass function with $\gamma = 1$ permits a higher relative fraction of high mass BH and by extension pairings between a broader range of masses, driving $q$ lower.
+
+Drawing spins ($\vec{\chi}_{1,2}$) from a uniform distribution between those that are aligned and anti-aligned with $\hat{\vec{L}}_\text{bin}$ means that the resulting $\Xeff$ distribution should be centered on $\Xeff \sim 0$, with the width of that distribution a function of the initial spin magnitudes $|\vec{\chi}_{1,2}|$; see, e.g., \cite{Callister21} for details.
+However, a bias towards prograde BBH formation in the AGN channel would favor positive $\Xeff$ values in general.
+Such a bias might be due to orbital inclination flipping \citep{DittmannDempseyLi24} of an inclined BBH, preferential ionization of retrograde BBHs as they spend more time at wider separation \citep[on average,][]{Wang+21,Calcino+23}, or some other mechanism.
+Additionally, once BBH merge, most of their orbital angular momentum as they coalesce will go into natal spin of the newly merged BH, typically $\chi \sim 0.7$ \citep{TichyMarronetti08}.
+Thus, hierarchical mergers containing higher generation (2g or higher) BH that have inherited these large positive spins will therefore strongly favor positive $\Xeff$.
+
+\subsection{Major contributions to \mcfacts}
+
+\mcfacts is developed by a large team, and I was present from the beginning and involved with many design decisions and development.
+While I made many contributions, I will highlight two of them here: the Monte Carlo method and a broken power-law distribution for assigning BH locations in the NSC.
+
+The core purpose of \mcfacts is to generate statistical populations of BH mergers produced through an algorithm replicating the physical processes present in the AGN formation channel.
+This requires the ability to repeatedly simulate those processes under slightly varying conditions to understand individual and cumulative effects of those variations.
+Monte Carlo methods are used for this purpose because they allow repeated random sampling of quantities from a range of possible values that are assigned a probability of being drawn from the population, i.e. a probability distribution.
+After we established the algorithm for evolving BHs in an AGN disk for a single galaxy, I implemented a pseudo-random number generator (PRNG) that allows us to set an initial random state using a unique seed.
+The generator is not truly random because this seed introduces a deterministic sequence that means the randomness is not unpredictable.
+This is a fundamental issue in cybersecurity but our code does not encrypt data or contain sensitive information.
+The pseudo-randomness is necessary for the work since the seed gives us the ability to start the generator at the same state for each run. 
+Then, each time we need to draw a number to assign a BH its mass or to select the orbital parameters after a dynamical encounter we invoke the same random number generator which advances its state with each draw.
+This functionality is a core aspect of scientific reproducibility that allows us to control experimental setups with better understanding of the outcomes.
+
+One of the probability distributions we use assigns the initial location of a BH in the AGN disk.
+I implemented a mechanism to draw these values by selecting one of the following probability distributions: 1) uniform distribution 2) broken power-law distribution.
+A uniform distribution assumes BHs have equal probability of existing at every radius in the disk, but it is only included as an optional setting for cases a user may find it useful and is not appropriate for determining BH distributions across large regions of the NSC.
+Our NSC model is defined with a broken power-law number density profile that goes as $n\propto R^{-7/4}$ out to a critical radius at $R\sim 0.25$ pc where the index changes to $n\propto R^{-2.5}$ out to $5$ pc and contains $10^4$ BHs within the central $\text{pc}^3$ \citep{Generozov+18}.
+If implemented directly, this distribution inaccurately allocates a greater probability density to the inner disk that, if used, would artificially over-crowd it with BHs.
+To correct for this, we normalize the radial grid by the critical radius as
+\begin{equation}
+	p(R) = \left( \frac{R}{\Rcrit} \right)^\eta
+\end{equation}
+using the correct power-law index $\eta$ as is appropriate relative to $\Rcrit$.
+Then, we scale the probability in each bin of the radial grid by its corresponding shell volume
+\begin{equation}
+	p(R) = \frac{p(R)}{\pi R^2 \Delta R}
+\end{equation}
+where $\Delta R$ is the width of the radial bin.
+The final probability density distribution is shown in \Fig{fig:nsc-loc-sampling} by the purple shaded region alongside those for the uniform distribution (red) and unscaled broken power-law distribution (teal).
+Also plotted are histograms of the resulting draws for 100 galaxies where the disk radius is $\Rout=10^6\,\Rs$, replicating the initial samples for a typical run in \mcfacts.
+The radius is extended here beyond $\Rout$ used in this work to demonstrate the shape of the broken power-law distribution and the BH populations in comparison with the uniform distribution.
+Importantly, a uniform distribution under-populates the region near $\Rcrit$ and over-populates in the outer disk.
+The population generated with the unscaled power-law probability distribution is so concentrated in the first bin that only $\sim1200$ BHs get initialized beyond it.
+The $y$-axis is trimmed to ignore most of these to highlight the complexity in the outer disk.
+
+
+
+
+\subsection{Methods}
+\label{sec:methods-qxeff}
+
+Here we introduce the assumptions, models, and parameters that we vary in the \mcfacts code relevant for testing the $q$--$\Xeff$ distribution.
+We run each of the following setups 100 times to build a statistically significant sample.
+In each run, our code evaluates the following physical processes:
+
+We begin by generating a disk model using the \code{pAGN} code \citep{Gangardt+24-pAGN} using the default parameters for a SMBH with mass $\Mbh=10^8\,\Msun$.
+The default extent is $5 \leq R/\Rg \leq 5\times10^5$ with the alpha viscosity parameter $\alpha=0.01$, and a lifetime depending on the disk model (see below).
+
+The next step is to populate the disk with BHs using a broken power-law distribution dependent on the power-law indices of the number density profiles as defined by \citet{Generozov+18}.
+
+We draw masses for each BH from a Pareto distribution IMF with index $M^{-2}$ over the range $10<M/\Msun<40$.
+To replicate the slight over density observed at $35\,\Msun$ \citep{Abbott+23-massbump}, we redraw for any BHs that would be assigned a mass above this range from a Gaussian with width $2.3\,\Msun$ centered at $35\,\Msun$.
+The initial BH spins are drawn from a Gaussian centered on dimensionless spin parameter $\chi=0$ and width $0.2$, and the radial locations are drawn from a volume-normalized probability distribution according to the NSC power-law structure.
+Finally, the orbital eccentricity is drawn from a uniform distribution in $e^2$ over the range $0<e<\emax$ and randomly assigned as a prograde or retrograde orbit according to a uniform distribution with the retrograde fraction set by $0<\fret<1$.
+BHs on retrograde orbits around the SMBH are more challenging to consider, and at the time of this work they are populated in the initial conditions but they are not allowed to interact with the prograde population and the equations governing their orbital evolution are not fully implemented.
+
+\begin{figure}
+\centering
+	\includegraphics[width=1\textwidth]{ch_qxeff_figs/probability_and_histogram_900bh_100gal_1e+06Rg.pdf}
+	\caption[Sampling black holes from a nuclear star cluster]{Probability densities and resulting population of BH drawn from a NSC for a uniform distribution (red, solid line), a broken power-law (teal, dashed line), and the same broken power-law with proper volume scaling (purple, dash-dotted line).}
+\label{fig:nsc-loc-sampling}
+\end{figure}
+
+AGN disk gas can circularize eccentric orbits \citep{McKernan+12} over time or pump eccentricity if the density increases with radius \citep{Secunda+21}. 
+Once orbits become circular, radial migration can occur both inward and outward depending on the disk conditions, at which point BHs may encounter each other to form BBHs, which we set to occur when their separations are within one Hill's radius of the more massive BH.
+While most binaries will likely form from the circularized population, they can still interact with BHs on elliptical or inclined orbits.
+Gas effects and dynamical encounters with a third BH can cause the binary to lose energy (harden) or gain energy (soften).
+Once BBHs are sufficiently hardened, further energy loss due to GW radiation becomes poss until they merge \citep{Peters64}.
+Merger recoils put BH remnants on eccentric orbits where the process continues or removes them from the disk.
+Finally, gas torque acting on disk-crossing BH orbits replenishes the embedded BH population from the NSC \citep{Fabj+20,Nasim+22}.
+
+\subsubsection{Disk Models}
+As we cannot yet observationally resolve them, the physical conditions of AGN disks are poorly constrained.
+Instead we rely on model fits to spectroscopic and multi-wavelength variability data.
+We use two common one-dimensional radial models, namely, SG \citep{SirkoGoodman03} and TQM \citep{ThompsonQuataertMurray05}.
+The inner regions of the SG disk are likely to be more accurate than the outer regions where assumptions are made to prevent the disk from collapsing due to gravitational instability.
+In contrast, the star formation models supporting the outer regions of the TQM model are more accurately implemented, but the model's opacity for inner disk annuli are likely too low.
+For both models we truncate the disk at some outer value $R_{\rm out}$, assume the disk lives in a steady state for time $\tauAGN$, and use the \code{pAGN} code to construct our disk models \citep{Gangardt+24-pAGN}.
+
+Analogous to protoplanetary disks, migration traps and anti-traps may form between regions of outward and inward migration \citep{Lyra+10}.
+We calculate migration torques for circular BH orbiters (singles and binaries) and change their semi-major axes depending on their location relative to user-defined traps according to \citet{Paardekooper+10} as implemented in \citet{GrishinGilbaumStone24}.
+We consider the additional influence of radiative feedback from accretion \citep{HanklaJiangArmitage20} that reduces the strength of inward migration torques and can even turn them outward.
+Following \citet{Bellovary+16}, we set migration traps at 700 $\Rg$ in SG disks and 500 $\Rg$ in TQM disks.
+In practice, mergers also aggregate near $R\sim10^3\,\Rg$ (for $\Mbh = 10^8\,\Msun$) when using migration prescriptions described by \citet{GrishinGilbaumStone24} as BH enter the region of lower migration speeds as they approach the trap.
+
+The choice of migration torque model may be important for disk structures around SMBH of different mass, and \mcfacts provides the user with two options: a two-dimensional model from \citet{Paardekooper+10} and a three-dimensional (3D) model from \citet{JimenezMassset17}.
+In general, the Jim\'enez-Masset 3D torques are weaker across the bulk disk by up to $\sim$30\%.
+This tends to drop the overall merger rate in disks (including at the trap if present).
+Likewise migration traps move radially outward in units of $\Rg$ as the SMBH mass drops well below $\Mbh=10^8\,\Msun$, but in \citet{McKernan+25-mcfactsI} we compared these models and found little change for $\Mbh = 10^8\,\Msun$ \citep[see Fig. 6 \& 7 of][]{McKernan+25-mcfactsI}, which is also the SMBH mass we find that produces the most mergers \citep{Delfavero+25-mcfactsIII}.
+Thus, we choose the simpler \citet{Paardekooper+10} torque model here and confine our study to disks around SMBH with mass $\Mbh = 10^8\,\Msun$.
+
+\subsubsection{Initial Black Hole Properties}
+We draw the initial BH masses from a Pareto distribution with $P(M) \propto M^{-\gamma}$ for $10\leq M/\Msun \leq40$, with an additional Gaussian component centered on $35M_{\odot}$ \citep[see][]{McKernan+25-mcfactsI}.
+We use $\gamma=2$ as the default throughout this paper and vary it to $\gamma=1$.
+We draw the initial BH spin directions $\hat{\chi}$ from a uniform distribution over the interval $[0,\pi]$ and the spin magnitudes from a Gaussian distribution centered at $\mu_\chi=0$ with standard deviation $\sigma_{\chi} = 0.1$ as the default and test variations to $\sigma_{\chi}=0.02$ and $0.2$.
+
+\subsubsection{Disk Lifetimes}
+AGN lifetimes ($\tauAGN$) are thought to lie in the range $\sim 0.1$ Myr \citep{Schawinski+15,Khrykin+19} to 10s of Myr \citep{Hopkins+05,Khrykin+21}.
+The lifetime is important for regulating how long each disk process operates on the nuclear system.
+We choose a default lifetime for SG disk models of $\tauAGN=0.5$ Myr and study variations of $\tauAGN = 0.25$ and 0.75 Myr.
+Since the TQM disk is generally less dense which reduces the effectiveness of gas interaction processes, we increase the default lifetime to $\tauAGN = 3$ Myr with variations of $\tauAGN = 2.5$ and 5 Myr.
+
+\subsubsection{Disk Size}
+The disk outer radius $R_{\rm out}$ determines what portion of the NSC will interact with the AGN disk; thus it dictates how many BH will be embedded in the disk at the start of an AGN episode and how many NSC objects can be captured over the AGN disk lifetime.
+Since opacity drives most of the processes affecting embedded BH, we use it to set $R_{\rm out}$.
+The opacity of an SG disk roughly increases in the inner disk before dropping off significantly in the outskirts.
+We set $R_{\rm out}$ to the radius at which the opacity decreases back to the value at the innermost disk radius, leading to a default disk size of $5\times10^4\,\Rg$, where $\Rg = G\Mbh/c^2$ is the gravitational radius with $\Mbh=10^{8}\Msun$ -- see Sec.~\ref{sec:smbh-mass}).
+We adopt this value for the TQM disk since it also reaches a similar value as found at the innermost edge at $5\times10^4\,\Rg$, though the opacity behaves inversely with radius as compared to the SG model.
+We expect larger disk sizes that intersect with a larger portion of the NSC to produce more mergers, although this depends on the NSC radial density profile.
+Additionally, the initial pool of BH in a larger disk has greater distances through which to migrate and encounter possible companions that are unavailable in a smaller disk, possibly increasing the overall number of mergers.
+As such, since larger objects migrate faster, they encounter more objects, so we might expect larger disk sizes to drive lower $q$ encounters.
+
+\subsubsection{Orbital Eccentricity}
+Gas drag induced by dynamical friction caused by Lindblad resonance torques \citep[referred to as Type I migration][]{GoldreichTremaine79,Ward97} can damp or pump orbital eccentricity $e$ of an embedded BH depending on the local conditions of the disk \citep{McKernan+12, Secunda+21, McKernanFord24, SzolgyenMacLeodLoeb22}.
+Radiation from accreting objects can cause an additional eccentricity pumping term \citep{Cornejo+23}.
+We compute the damping timescale according to \citet{TanakaWard04} via \citet{McKernanFord24} and apply \citet{PapaloizouLarwood00} exponential decay when $e<2H$ -- where $H$ is the pressure scale height -- and the characteristic decay timescale when $e>2H$ \citep{BitschKley10, Horn+12}.
+Once the orbital eccentricity is sufficiently small, BH migration and BBH formation become efficient.
+A relaxed (thermal) NSC has median eccentricity of $e=0.7$, but this requires a long duty cycle between AGN phases.
+SMBH spins observed in the local Universe are predominantly high spin with $\chi>0.9$ for half of SMBH \citep{Reynolds19}, indicating they preferentially accrete along a consistent plane rather than randomly \citep{Volonteri+05}.
+If AGN consist of short-timescale accretion episodes \citep{Schawinski+15,Shen21}, delivered from a fuel source in the same plane (possibly the dusty torus), this could drive consistent SMBH spin up over many AGN episodes.
+In this case, the NSC populations would have little time to relax between episodes, keeping eccentricities relatively damped (low).
+
+We draw initial orbital eccentricities $e_0$ from a uniform distribution between 0 and $e_{0,max}$ representing the maximum eccentricity achieved during the prior quiescent state.
+Thus, a smaller value of $e_{0,max}$ implies a shorter relaxation time between accretion episodes according to the previously mentioned scenario.
+We choose fiducial values for the maximum in SG disks to be $e_{0,max}=0.5$ and in TQM disk to be $e_{0,max}=0.05$.
+The latter compensates for the lower density in TQM and correspondingly longer circularization timescales.
+This choice assumes the NSC has insufficient time to fully relax between AGN disk episodes and that each such episode occurs in the same plane.
+We also explore setting $e_0=0$ in the low density TQM model to bypass the long eccentricity damping time.
+
+\subsubsection{Binary Formation}
+We form BBH from the circularized BH population when the separation between adjacent orbits reaches one Hill radius ($\Rhill$) at the beginning of the time step, i.e. $\Delta a = |a_1-a_2| \leq 1\Rhill$, where $a$ is the semi-major axis, $\Rhill = a_1 \left( M_1/3\Mbh \right)^{1/3}$, $M_1$ is the more massive candidate, and $\Mbh$ is the mass of the supermassive black hole.
+Recent analytic \citep{QianLiLai24, DodiciTremaine24} and hydrodynamical work \citep{DeLaurentiis+23, Whitehead+24} shows gas interactions complicate this process and allow BBH to form with a wide range of impact parameters and even between eccentric orbiters.
+Our simple model does not capture this rich complexity.
+
+\subsubsection{Nuclear Star Cluster}
+BH with disk-crossing orbits will align to and become fully embedded in the disk over time \citep{Fabj+20,Nasim+22,McKernan+22-starfall,WangZhuLin24}.
+We use an NSC model with an outer radius of 5 pc and total mass $M_{\rm NSC}=3 \times 10^7\,\Msun$.
+The number of BH to stars is $N_{\rm BH}/N_{*} = 10^{-3}$ according to \citet{Generozov+18} and the typical mass ratio is $M_{\rm BH}/M_{*} = 0.1$.
+We draw locations from a broken power-law distribution for the radial BH number density $n$ representing a ``cored'' type cluster where the radial number density index changes at a critical radius $\Rcrit=0.25$ pc or $5\times10^4\,\Rg$ when $\Mbh=10^8\,\Msun$.
+When $r<\Rcrit$, $n\propto r^{-7/4}\,{\rm pc}^{-3}$ and $n\propto r^{-2.5}\,{\rm pc}^{-3}$ elsewhere \citep{BachallWolf76,Generozov+18}.
+
+\subsubsection{SMBH Mass}
+\label{sec:smbh-mass}
+The mass of the central SMBH determines the profiles for a variety of important disk properties, including the density, scale height, and opacity, that vary with radius.
+It also influences the NSC mass and outer disk radius.
+For this study we restricted ourselves to a single SMBH mass of $10^8~\Msun$.
+We note that the standard TQM model uses an SMBH mass of $10^9~\Msun$, but \citet{Delfavero+25-mcfactsIII} find $\sim 10^{8}\Msun$ is likely to be the dominant contributor to AGN channel merger rates.
+
+\subsubsection{Retrograde Binary Fraction}
+We choose the BBH angular momentum by drawing from a distribution biased by the user-chosen fraction $\fret$.
+BBH  are expected to form with prograde orbital angular momenta, i.e., aligned with the disk orbital angular momentum ($\vec{L}_{\rm bin}\,||\,\vec{L}_{\rm disk}$), because retrograde binaries may experience extreme eccentricity pumping \citep{Wang+21} or be flipped to prograde due to dynamical encounters \citep{Samsing+22,McKernanFord24}.
+For these reasons we choose $\fret=0$ as our default, but we  experiment with $\fret=0.1, 0.5$ to understand the impact of retrograde binaries on $q$--$\Xeff$ space.
+
+%\subsubsection{AGN Duty Cycle}
+% disk model, lifetimes, BH population, what happens during down time (e.g., relaxation, eccentricity pumping)?
+
+
+\subsubsection{Analysis Techniques}
+% sub-population statistics
+Understanding how efficiently various AGN systems produce high $\Xeff$ events is crucial for understanding the underlying fraction of AGN events contributing to the observed population.
+Using the definitions for the generation of merger previously defined, sub-populations two and three are hierarchical mergers since they contain BH produced via prior merger events.
+
+% slope of line
+\citet{Callister+21} report an anti-correlation between $(q,\Xeff)$ with mean expectation values for the slopes of their ``observed" and ``predicted" samples of $d\chi/dq = -0.46$ and $-0.49$, respectively.
+We measure the influence of hierarchical mergers using a non-linear least squares method to fit a line passing through the point $(q,\Xeff)=(1,0)$ to all mergers.
+Shallower slopes (less negative) indicate a preference for larger $q$ and lower $\Xeff$ or simply a lack of high $\Xeff$ mergers.
+Steeper slopes (more negative) can indicate a few possibilities: many large $\Xeff$ low $q$ events, many large $\Xeff$ large $q$ events, or both.
+We anchor our line of best fit at ($q=1,\Xeff=0$) where $q=1$ is the upper bound to $q=M_{2}/M_{1}$.
+
+In principle $\Xeff$ at $q=1$ is not bound.
+However the weight of the numerically dominant 1g population consistently sits at $\Xeff=0$ (as shown below).
+An unbound linear regression on the data in Fig.~\ref{fig:default-imf} decreases $d\chi/dq$ by $0.1$, and has a larger uncertainty of $\pm0.03$.
+The value $R^2=0.12$ indicates a poor fit.
+Thus, by fixing our line of best fit at $(q,\Xeff)=(1,0)$, we add a systematic uncertainty of $d\chi/dq=+0.1$, but obtain a better weighted fit overall.
+
+
+\subsection{Results}
+\label{sec:results-qxeff}
+Here we first explain the $q$--$\Xeff$ distribution of mergers from our fiducial models.
+Then, we demonstrate the effects of changing various input parameters on $q$--$\Xeff$ space.
+
+\subsubsection{Reproducibility}
+Data used in each panel of the figures in this paper can be reproduced using the correct seed and input parameters.
+In the \code{Makefile}, change the \code{SEED} parameter to the value listed in Table~\ref{tab:run-parameters}.
+For random seeds using \code{Makefile}, add an empty line above \code{--seed}, comment out the \code{--seed} line and save the file.
+If a parameter needs to be changed, in each case, use the \code{model_choice_old.ini} file and change the appropriate parameter there.
+The default time step is set to $10^4$ yrs.
+Set the corresponding number of time steps with \code{timestep_num} to achieve the desired disk lifetime.
+Set migration trap locations using \code{disk_radius_trap} in $\Rg$.
+\code{disk_bh_orb_ecc_max_init} sets the maximum initial orbital eccentricity allowed for orbits of BH initially embedded in the disk.
+Use \code{nsc_imf_powerlaw_index} to control the slope of the probability distribution function used for mass draws.
+\code{disk_radius_outer} controls the location of the outer edge of the disk in $\Rg$.
+The parameter \code{nsc_bh_spin_dist_sigma} controls the width of the normal distribution from which initial BH spins are drawn.
+The parameter \code{fraction_bin_retro} controls the fraction of retrograde binaries allowed to form with angular momenta pointing opposite to the disk's.
+
+\renewcommand{\arraystretch}{1}
+\begin{table}[htbp]
+\centering
+{\footnotesize
+\begin{tabular}{rcc}
+    Parameter & Default value & Units \\
+    \hline\hline
+    \code{smbh_mass} & $10^{8}$ & $M_{\odot}$ \\
+    \hline
+    \code{disk_model_name} & \code{sirko_goodman} & \\
+    \code{flag_use_pagn} & 1 & \\
+    \code{disk_radius_trap} & 700 & $\Rg$ \\
+    \code{disk_radius_outer} & $5\times 10^{4}$ & $\Rg$ \\
+    \code{disk_radius_max_pc} & 0 & \\
+    \code{disk_alpha_viscosity} & 0.01 & \\
+    \code{inner_disk_outer_radius} & $50$ & $\Rg$ \\
+    \code{disk_inner_stable_circ_orb} & $6$ & $\Rg$ \\
+    \code{disk_aspect_ratio_avg} & $0.03$ &  \\
+    \hline
+    \code{nsc_radius_outer} & 5 & pc\\
+    \code{nsc_radius_crit} & 0.25 & pc\\
+    \code{nsc_mass} & $3 \times 10^{7}$ & $M_{\odot}$ \\
+    \code{nsc_ratio_bh_num_star_num} & $10^{-3}$ &  \\
+    \code{nsc_ratio_bh_mass_star_mass} & 10 &  \\
+    \code{nsc_density_index_inner} & 1.75 & \\
+    \code{nsc_density_index_outer} & 2.5 & \\
+    \code{nsc_spheroid_normalization} & 1 &  \\
+    \code{nsc_imf_bh_mode} & 10 & $M_{\odot}$ \\
+    \code{nsc_imf_bh_max} & 40 & $M_{\odot}$ \\
+    \code{nsc_imf_powerlaw_index} & 2 & \\
+    \code{nsc_bh_spin_dist_mu} & 0 & \\
+    \code{nsc_bh_spin_dist_sigma} & 0.1 & \\
+    \code{nsc_imf_powerlaw_index} & 2 & \\
+    \hline
+    \code{disk_bh_torque_condition} & 0.1 & \\
+    \code{disk_bh_eddington_ratio} & 1.0 & \\
+    \code{disk_bh_orb_ecc_max_init} & 0.3 & \\
+    \code{disk_radius_capture_outer} & $10^{3}$ & $\Rg$ \\
+    \code{disk_bh_pro_orb_ecc_crit} & 0.01 & \\
+    \code{mass_pile_up} & 35 & $M_{\odot}$\\
+    \code{timestep_duration_yr} & $10^{4}$ & yr\\
+    \code{timestep_num} & 100 & \\
+    \code{capture_time_yr} & $10^{5}$ & yr\\
+    \code{galaxy_num} & 100 & \\
+    \code{delta_energy_strong} & 0.1 & \\
+    \code{fraction_bin_retro} & 0.0 & \\
+    \code{flag_thermal_feedback} & 1 & \\
+    \code{flag_orb_ecc_damping} & 1 & \\
+    \code{flag_dynamic_enc} & 1 & \\
+    \code{flag_torque_prescription} & \code{paardekooper} & \\
+    \code{mean_harden_energy_delta} & 0.9 & \\
+    \code{var_harden_energy_delta} & 0.025 & \\
+    \hline
+    \code{flag_add_stars} & 0 & \\
+\end{tabular}
+}
+\caption[Default \mcfacts input parameters]{Default input parameters for the SMBH, AGN disk and NSC as well as physics choices in \texttt{p1\_model\_default.ini}.
+	Published in \citet{McKernan+25-mcfactsI}.}
+\label{tab:default_model}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+{\footnotesize
+\begin{tabular}{lclc}
+    Run & Seed & Parameter & Value \\
+    \hline\hline
+    \code{sg_default} & 482821398 & \code{disk_model_name} & \code{sirko_goodman} \\
+    &  & \code{timestep_num} & 50 \\
+    \code{tqm_default} & 783822028 & \code{disk_model_name} & \code{thompson_etal} \\
+    &  & \code{timestep_num} & 300 \\
+    &  & \code{disk_radius_trap} & 500 \\
+    &  & \code{disk_bh_orb_ecc_max_init} & 0.05 \\
+    \hline
+    \code{sg_g1} & 40310999 & \code{nsc_imf_powerlaw_index} & 1 \\
+    \code{tqm_g1} & 63434937 & \code{nsc_imf_powerlaw_index} & 1 \\
+    \hline
+    \code{sg_t0p25} & 27228638 & \code{timestep_num} & 25 \\
+    \code{sg_t0p75} & 46249919 & \code{timestep_num} & 75 \\
+    \code{tqm_t2p5} & 75904298 & \code{timestep_num} & 250 \\
+    \code{tqm_t5} & 43913681 & \code{timestep_num} & 500 \\
+    \hline
+    \code{sg_r2e4} & 61693043 & \code{disk_radius_outer} & $2\times10^4$ \\
+    \code{sg_r7e4} & 572938 & \code{disk_radius_outer} & $7\times10^4$ \\
+    \code{tqm_r2e4} & 37960990 & \code{disk_radius_outer} & $2\times10^4$ \\
+    \code{tqm_r7e4} & 2039485 & \code{disk_radius_outer} & $7\times10^4$ \\
+    \hline
+    \code{sg_s0p02} & 13555771 & \code{nsc_bh_spin_dist_sigma} & 0.02 \\
+    \code{sg_s0p20} & 33286099 & \code{nsc_bh_spin_dist_sigma} & 0.20 \\
+    \code{tqm_s0p02} & 74447390 & \code{nsc_bh_spin_dist_sigma} & 0.02 \\
+    \code{tqm_s0p20} & 10409162 & \code{nsc_bh_spin_dist_sigma} & 0.20 \\
+    \hline
+    \code{sg_fr0p1} & 38049133 & \code{fraction_bin_retro} & 0.1 \\
+    \code{sg_fr0p5} & 28559955 & \code{fraction_bin_retro} & 0.5 \\
+    \code{tqm_fr0p1} & 10171242 & \code{fraction_bin_retro} & 0.1 \\
+    \code{tqm_fr0p5} & 59253870 & \code{fraction_bin_retro} & 0.5 \\
+    \hline
+    \code{sg_e0p1} & 60447293 & \code{disk_bh_orb_ecc_max_init} & 0.1 \\
+    \code{sg_e0p5} & 33885262 & \code{disk_bh_orb_ecc_max_init} & 0.5 \\
+    \hline
+    \code{sg_e0p7} & 36123383 & \code{disk_bh_orb_ecc_max_init} & 0.7 \\
+    \code{sg_e0p7_t0p75} & 48962233 & \code{disk_bh_orb_ecc_max_init} & 0.7 \\
+    &  & \code{timestep_num} & 150 \\
+    \hline
+    \code{tqm_e0p015} & 85532667 & \code{disk_bh_orb_ecc_max_init} & 0.015 \\
+    \code{tqm_e0p1} & 20803120 & \code{disk_bh_orb_ecc_max_init} & 0.1 \\
+    \hline
+    \code{tqm_e0_t1} & 60471184 & \code{disk_bh_orb_ecc_max_init} & 0.0 \\
+    &  & \code{timestep_num} & 100 \\
+    \code{tqm_e0} & 92269440 & \code{disk_bh_orb_ecc_max_init} & 0.0
+\end{tabular}
+}
+\caption[Parameter choices for \mcfacts runs]{Unique parameters choices and random number generator seeds for each run.
+	All other parameters are unchanged from those in the default models, which are otherwise identical to those in Table~\ref{tab:default_model}.}
+\label{tab:run-parameters}
+\end{table}
+
+
+\subsubsection{Default Models}
+The top left panel of \Fig{fig:default-imf} shows the mass ratio ($q$) versus effective spin ($\Xeff$) phase space for our default model consisting of 100 galaxies using an SG disk with lifetime $\tauAGN = 0.5$ Myr, radius $R_{\rm out} = 5\times 10^4\,\Rg$, and migration trap at 700$\,\Rg$.
+We refer to this model as \code{sg_default} and set the quantities using these \mcfacts parameters: \code{timestep_num}, \code{disk_radius_outer}, and \code{disk_radius_trap}.
+The initial BH population is drawn from a mass distribution of index $\gamma=2$ (\code{nsc_imf_powerlaw_index}) with a maximum initial orbital eccentricity $e_{\rm 0,max}=0.5$ (\code{disk_bh_orb_ecc_max_init}).
+We only allow prograde BH orbiters to form BBH and do not allow the retrograde orbiters to interact in any way.
+We restrict BBH to form from BH orbiting in a prograde orientation with the same sense of direction as the disk ($\vec{L}_{\rm BH}\,||\,\vec{L}_{\rm disk}$) and bias the resulting binaries towards a prograde direction (i.e., $\vec{L}_{\rm bin}\,||\,\vec{L}_{\rm disk}$, and see an exploration of $\fret$ below).
+Retrograde BH orbiters do exist but presently are not allowed to form BBH or interact with the prograde BH population, although they can (and do) flip to prograde over time \citep{McKernan+25-mcfactsI}.
+
+Gold points correspond to mergers among the first BH generation (1g-1g; hereafter 1g mergers).
+Inverted purple triangles are mergers involving at least one 2g BH, i.e. either 2g-1g or 2g-2g (hereafter 2g mergers).
+Red triangles indicate mergers involving at least one 3g or higher BH ($\geq$3g-Ng; hereafter $\geq$3g mergers).
+The mean and standard deviation among the gold, purple, and red distributions, respectively, are $(\barq,\barXeff)=\{[0.67\pm 0.19,\ -0.02\pm 0.05], [0.51\pm 0.18,\ 0.44\pm 0.08], [0.45\pm 0.22,\ 0.61\pm 0.13]\}$ (see also Table~\ref{tab:popstats}).
+
+The points lie in roughly two distributions: 1g mergers stay clustered around $\Xeff \sim 0$, whereas 2g and $\geq$3g tend to have larger, positive $\Xeff$ values and trend towards smaller $q$ values.
+Since $10\,M_{\odot}$ BH are the most common from the IMF, then those in the 2g population will tend to be $\sim 20\,M_{\odot}$ leading to 2g-1g mergers concentrating around $q \sim 0.5$.
+Similarly, a given 3g-1g merger will typically concentrate at $q \sim 1/3$.
+
+We quantify the anti-correlation between $\Xeff$ and $q$ (larger $\Xeff$ values are measured for lower $q$) using the slope of a line fit to the data and passing through $(q,\Xeff)=(1,0)$.
+In the top left panel of \Fig{fig:default-imf} the black solid line (fit to all points) has a slope of $d\chi/dq=-0.28\pm0.01$.
+
+The bottom left panel of \Fig{fig:default-imf} shows the results from our default TQM setup ($\tqmdefault$).
+All parameters are identical to those in the $\sgdefault$ setup except the TQM disk model, a longer lifetime at $\tauAGN=3$ Myr, and lower maximum initial orbital eccentricity $e_{\rm 0,max}=0.05$.
+The 1g population is qualitatively similar as those occurring in the SG disk and concentrate around $\Xeff=0$, though spread over a wider range of $\Xeff$, and the hierarchical mergers still shift towards positive $\Xeff$, but only seven 2g events and zero $\geq3g$ events occurred compared to the 606 1g mergers.
+The low density TQM disk produces drastically fewer mergers than a more dense SG disk despite a lifetime three times longer.
+Additionally, low disk opacity results in radiative feedback torques \citep{HanklaJiangArmitage20} that dominate over inward migration torques causing a net outward migration for more massive objects that increases time between encounters.
+
+The mean mass ratio $\barq=0.68\pm0.20$ for 1g mergers (gold points) in the TQM default run is similar to the SG default.
+The spins are centered on zero but with larger standard deviation, $\barXeff({\rm 1g})=-0.01\pm-0.07$.
+The wider spread in $\Xeff$ in TQM comes from a combination of (i) a lower surface density, leading to a longer damping time (allowing more eccentric 1g BH to spin down to more negative $\Xeff$ for longer) as well as (ii) a longer overall disk lifetime (3 Myr) allowing more circularized 1g BH to spin up for longer.
+
+
+The 2g sample (purple triangles) has a mean mass ratio of $\barq({\rm 2g})=0.55\pm0.14$ and $\barXeff({\rm 2g})=0.44\pm0.14$, though these statistics are for only seven events.
+The paucity of hierarchical mergers results in an essentially flat $d\chi/dq=-0.03\pm0.01$ slope.
+
+Qualitatively, both plots tell us populations of higher generation mergers tend to have higher \textit{positive} $\Xeff$.
+This trend is visible in $\overline{\Xeff}$ (see Table~\ref{tab:popstats}), reflecting what was seen in \citet{McKernan+22:q-Xeff}.
+Because we initialized BH spin orientations randomly, we expect $\Xeff\sim0$ for 1g events.
+However, their remnants receive a natal spin of $\chi \sim 0.7$ directed along the progenitor binary's angular momentum $\vec{L}_{\rm bin}$.
+Since we limit BBH to form prograde by default, $\vec{\chi}$ tends to point parallel to the disk angular momentum (positive).
+A BH's mass and spin magnitude increase with generation, so we expect the hierarchical component of BBH mergers to be both more massive and have a higher spin, dominating \eq{eqn:Xeff} and leading low $q$ events to have high $\Xeff$ values matching our findings (but see \sect{sec:retro-results} for what happens when some fraction $\fret$ of BBH form retrograde).
+
+We include a selection of GW sources in the left column of Fig.~\ref{fig:default-imf} as teal data points: GW190412, GW190521, GW190814, GW200115\_042309, GW200208\_222617, GW200210\_092254, 
+and finally the location of the recent event  GW231123, is marked with a red-orange ``x"
+\citep{Abbott+20-GW190521astro,Abbott+20-GW190521,Abbott+23-O3b,Abbott+24:GWTC-2.1,LVK+25-GW231123}.
+We use reported mass ranges to calculate the estimated errors in the mass ratio.
+The central point near $q=0.6$ is GW190521 and overlaps mostly with the 1g population.
+
+However, the error in $\Xeff$ is great enough for this source to lie in the 2g-2g population of hierarchical mergers, supporting the claim that the progenitors reached masses $98.4_{-21.7}^{+33.6}\,\Msun$ and $57.2_{-30.1}^{+27.1}\,\Msun$ via prior mergers.
+Alternatively, if $\Xeff<0$ for GW190521, this might indicate an origin in AGN with $f_{\rm ret}>0$ (see discussion below).
+The point at $\Xeff=-0.15$ and $q=0.24$ (masses $5.9_{-2.5}^{+2.0}\,\Msun$ and $1.44_{+0.85}^{-0.28}\,\Msun$) is GW200115\_043209.
+The progenitors of this source have masses below the minimum mass in our IMF, but the mass ratio and effective spin suggest this source belongs to the 1g-1g population.
+GW190814 and GW200210\_092254, both with $q=0.1$ and centered at $\Xeff=0$, also correlate with the 1g-1g merger distribution.
+
+Our IMF range limits the mass ratio range of 1g-1g mergers to $q>$0.25, but see \citet{Delfavero+25-mcfactsIII} for a study producing mergers down to $q \sim 0.1$.
+GW190412 falls between the 1g and hierarchical populations, but their masses ($27.7_{-6.0}^{+6.0}\,\Msun$ and $9.0_{-1.4}^{+2.0}\,\Msun$) make it difficult to distinguish between these possible progenitor populations.
+GW200208\_222616 lies at  $\Xeff=0.45$ and $q=0.24$ (masses $51_{-30}^{+103}\,\Msun$ and $12.3_{-5.5}^{+9.2}\,\Msun$).
+Though the data point overlaps with the low-$q$ end of the hierarchical population we produced, the large error bars, especially on the primary mass, suggest a 1g-1g or hierarchical merger are both possible explanations.
+Finally, the red-orange ``x" marks GW231123 \citep{LVK+25-GW231123} which lies directly in the 2g population island.
+GW231123 overlaps with the high-$\Xeff$ and high-$q$ region primarily populated by $\geq$3g events that results from components with large, aligned spins of similar masses.
+This suggests that GW231123 is a hierarchical merger between progenitors that previously merged in a similar plane (see Delfavero et al. 2025 in prep.)
+ 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_default_imf.pdf}
+    \caption[Mass ratio ($q$) distribution as a function of effective spin ($\Xeff$)]{\textbf{Mass ratio ($q$) distribution as a function of $\Xeff$}.
+    \textit{Top left:} results from our default setup for a \citet{SirkoGoodman03} disk with BH mass distribution power-law index $\gamma=2$, run \code{sg_default}.
+    Gold points represent 1g-1g mergers (see text).
+    Inverted purple triangles indicate either 2g-1g or 2g-2g mergers.
+    Red triangles indicate $\geq$3g-Ng mergers.
+    The solid and dashed lines are fit through ($\Xeff,q)=(0,1)$ and entire and $\geq$2g populations, respectively.
+    Teal points with error bars are a representative sample of GW sources chosen to avoid cluttering and provide context for our results: GW190412, GW190521, GW190814, GW200115\_042309, GW200208\_222617, GW200210\_092254.
+    The red orange data point with an ``x" represents GW231123.
+    \textit{Bottom left:} default setup for a \citet{ThompsonQuataertMurray05} disk, run \code{tqm_default}.
+    \textit{Right column:} same as SG and TQM defaults but with shallower IMF index of $\gamma=1$ that increases the probability for high-mass BH.
+    Each experiment was performed for 100 galaxies.
+    See Table~\ref{tab:run-parameters} for setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:default-imf}
+\end{figure}
+
+We show the final masses as a function of radius in the left column and time in the right column in  \Fig{fig:default-radius-time}.
+In an SG disk (top row), mergers between all generations occur beyond $3\times10^3\,\Rg$, though 1g-1g mergers dominate this region.
+As migration torques drive the embedded population inwards, a reduced torque at $\lesssim 10^{3}\,\Rg$ causes a traffic jam as they approach the trap set at $\sim 700\,\Rg$ \citep[also the vertical dashed line]{Bellovary+16}.
+For our relatively short-lived default $\sim 0.5$Myr disk, most hierarchical mergers occur in this 'swamp' outside of the trap .
+The dense inner disk population here as a result of migration and disk capture, drives the majority of $\geq$2g mergers and produces all remnants with mass $>90\,\Msun$, reinforcing the importance of traps in SG disks for producing BH with masses in the upper mass gap.
+The circularization, migration, binary formation, and binary hardening processes take roughly $\sim 0.2$ Myr at which point 1g mergers occur,
+consistent with realignment timescales of inclined binaries at migration traps  \citep{Gilbaum+25}.
+After $\sim 0.25$Myr, 2g mergers appear, and $\geq$3g mergers start around $\sim 0.33$ Myr.
+In each population, the final mass attainable increases with time.
+
+In a TQM disk (bottom row of \Fig{fig:default-radius-time}) torques from radiative feedback combined with low disk opacity cause outward migration towards the disk edge at $5\times10^4\,\Rg$, while inside $10^3\,\Rg$, the torques are more balanced, leading to mergers down to $10^2\,\Rg$.
+The TQM disk produces a burst of mergers in the first 0.25 Myr from BH on initially nearly circular orbits.
+Then, the rate settles to a steady-state sustained by BH captured from the NSC by the disk.
+The much weaker migration torques in TQM disks are unable to concentrate BH as densely as SG disks near migration traps suppressing hierarchical mergers to 3g remnants up to $\sim70\,\Msun$.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_default_radius_time.pdf}
+    \caption[Final masses of merger remnants vs. radius and time]{Final masses of merger remnants versus radius (left column) and time (right column) in SG disks (top row) and TQM disks (bottom row).
+    Strong migration torques and traps in SG disks near $10^3\,\Rg$ accelerate hierarchical mergers whereas weaker torques in the TQM disk cause traps to be less important leading to a maximum of 3g remnants and lower masses.
+    SG disks take $\sim0.2$ Myr to regularly produce 1g mergers with 2g mergers starting at 0.25 Myr and 3g+ mergers at 0.33 Myr, while final mass increases steadily with time and reaches $\sim 120\,\Msun$.
+    TQM disks quickly merge the initial embedded BH population in the first 0.25 Myr and reach a steady state as the disk captures more BH.
+    The mass range of remnants stays relatively even between 20 and 70 $\Msun$ throughout time.
+    Markers are as in \Fig{fig:default-imf}.}
+    \label{fig:default-radius-time}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_default_mass_v_chieff.pdf}
+    \caption[Primary mass vs. $\Xeff$]{\textbf{Primary Mass vs. $\Xeff$.}
+    Hierarchical mergers drive primary masses higher and produce mergers with larger values of $\Xeff$.
+    Markers are as in \Fig{fig:default-imf}.}
+    \label{fig:default-primarymass-xeff}
+\end{figure}
+
+Fig.~\ref{fig:default-primarymass-xeff} shows the primary mass of mergers as a function $\Xeff$.
+Hierarchical mergers drive up the primary mass of subsequent events which tend to have larger $\Xeff$.
+In high generation mergers whose primaries are more likely to have higher mass, randomly oriented spins of companions have less effect on $\Xeff$ since the primaries are remnants that have inherited their spin from the orbital angular momentum of their progenitor BBH, and we have restricted BBH to form with angular momenta aligned with the disk in this setup.
+
+Below we explore the effects of a series of parameters on the intrinsic $q$--$\Xeff$ distributions produced by galaxies hosting a SG or TQM AGN disk model.
+
+
+\subsubsection{Changing the Mass Function}
+First, we test the effect of flattening the BH initial mass function (IMF) by changing the power-law index from a steeper $\gamma=2$ (our default) to $\gamma=1$ (\code{nsc_imf_powerlaw_index} in \mcfacts).
+NSCs may have a shallower-than-Salpeter IMF, and indeed a shallow IMF is observed in our own Galactic nucleus \citep[][]{Lu+2013}.
+
+The top right panel of \Fig{fig:default-imf} shows the results from run \code{sg_g1} and is qualitatively similar to $\sgdefault$.
+We see the same population islands: a 1g merger population centered on $\Xeff \sim 0$, as well as hierarchical populations at larger $\Xeff$.
+However, given a shallower mass function or equivalently a heavier IMF, the typical mass ratio shifts to smaller values, as expected (see Table~\ref{tab:popstats}).
+Thus, among the 1g-1g population we can see that the population is dispersed away from $q \sim 1$, evening out the slight tapering seen in the top left panel were $\gamma=2$.
+From Table~\ref{tab:popstats}, among 1g mergers $\barq$ drops slightly from $\barq$(1g)$=0.67\pm0.19$ from \code{sg_default} to $\barq$(1g)$=0.63\pm0.21$ in \code{sg_g1} with double the number of mergers, while $\barXeff$(1g) remains the same ($-0.02\pm0.05$ vs. $-0.01\pm0.06$ here).
+Among higher generation mergers, visually there is a slight smearing out in both $q,\Xeff$ with the large $q$ region filling in.
+Although $\barq,\barXeff$ remain similar to the default within the margins of error for both hierarchical populations, the shallower IMF produces double the number of hierarchical mergers overall and a factor three more mergers of $\geq$3g (see Table~\ref{tab:popstats}).
+
+The slope of the line measuring the anti-correlation decreases significantly from $d\chi/dq=-0.28\pm0.01$ to $d\chi/dq=-0.33\pm0.01$ with shallower IMF.
+The change in slope seems mainly driven by the ability for more hierarchical mergers to form, given the larger Hill radius of heavier BH, which increases the likelihood of BBH formation.
+
+As we flatten the BH IMF from $\gamma=2$ in the $\tqmdefault$ setup to $\gamma=1$ for setup \code{tqm_g1}, we do not see any visual difference comparing the two panels in the bottom row in \Fig{fig:default-imf}.
+The 1g population shifts slightly down to $\barq({\rm 1g})=0.65\pm0.23$ while $\barXeff$ is identical despite 10\% more mergers.
+The 2g population keeps the same $\barq$(2g) but doubling the number of events and increasing the number of low $q$ mergers drives $\barXeff$(2g) to $0.37\pm0.12$.
+As for $\gamma=2$, zero $\geq$3g mergers occurred.
+The line fit slope does not significantly change between $\tqmdefault$ and \code{tqm_g1}.
+
+For denser disks like SG, hierarchical mergers occur more readily as we flatten the mass function, since migration speed depends linearly on the mass \citep{McKernan+25-mcfactsI}.
+The general increase in number of large $\Xeff$ hierarchical events of $\geq$3g can most easily be seen in the steepening of the line fit to the overall population.
+Notably, the only appreciable change occurs for $q$ of 2g mergers when changing IMF slope in low density, low torque disks like TQM.
+
+
+\subsubsection{Accretion Disk Lifetime}
+Next, we explore changes in the disk lifetime from our default models.
+We consider SG disk lifetime spanning $\tauAGN=[0.25,0.75]$ Myr.
+The less dense TQM disk model spans $\tauAGN=[2.5,5]$ Myr.
+These adjustments are made by changing \code{timestep_num} according to \code{timestep_duration_yr} (default $10^4\,$yr).
+
+The top row of \Fig{fig:time} shows the results for a SG disk with $\tauAGN=0.25\,$Myr (left, \code{sg_t0p25}) 0.5 Myr (center, $\sgdefault$), and 0.75 Myr (right, \code{sg_t0p75}).
+Decreasing $\tauAGN$ decreases the number of 1g and produces a single 2g merger since few BH on eccentric orbits are able to circularize, migrate, form binaries, and merge in such a short $\tauAGN$.
+Increasing $\tauAGN$ does not significantly change the population features, however the increased time allows $\geq$3g mergers to fill in the low $q$ and high $\Xeff$ (bottom right) corner of the space.
+The island in the upper right region is populated by mergers of BBH where both components are high generations and of similar mass and therefore have spins near the natal value of $\Xeff \sim 0.7$ for merger remnants.
+
+The bottom row of \Fig{fig:time} shows the results for a TQM disk with $\tauAGN=2.5$ Myr (left, \code{tqm_t2p5}) 3 Myr (center, $\tqmdefault$), and 5 Myr (right, \code{tqm_t5}).
+Both 1g and 2g populations look very similar except for a slight increase in the number of 2g mergers and some 1g mergers with more negative $\Xeff$ when $\tauAGN=0.75$ Myr.
+This latter feature is caused by eccentric BH drastically spinning down during the long circularization process required for this model, but there are no statistically significant changes to any of the diagnostic quantities that are not attributable to low numbers (see Table.~\ref{tab:popstats}).
+
+In SG disks, $\tauAGN$ greatly affects the slope of the anti-correlation even when we exclude the case when $\tauAGN=0.25$ Myr due to the lack of mergers.
+Increasing $\tauAGN$ from 0.5 Myr to 0.75 Myr moves fit from $d\chi/dq=-0.28\pm0.01$ to $-0.59\pm0.01$, caused by five times more 2g mergers and ten times more $\geq$3g mergers.
+This overall steepening primarily points to a correlation between $\tauAGN$ and the number of hierarchical mergers, especially between high generation progenitors.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_time.pdf}
+    \caption[Varying the disk lifetime]{\textbf{Varying the disk lifetime.}
+    \textit{Top row:} SG disk setups with $\tauAGN=[0.25,0.5,0.75]$ Myr.
+    \textit{Bottom row:} TQM disk setups with $\tauAGN=2.5$, 3, and 5 Myr.
+    The anti-correlation steepens with lifetime in dense SG disks as more hierarchical mergers with large $\Xeff$ occur, but $\tauAGN$ has little impact on low density TQM disks.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:time}
+\end{figure}
+
+Fig.~\ref{fig:time-mass} shows the history of mergers for the runs shown in Fig.~\ref{fig:time}.
+As $\tauAGN$ increases, an SG disk steadily produces higher masses via hierarchical mergers.
+The $\geq$3g population builds masses up to 100$\,\Msun$ in 0.5 Myr and 200$\,\Msun$ after 0.75 Myr due to saturation at the migration traps.
+In contrast, a TQM disk does not produce increasingly massive remnants via hierarchical mergers with longer lifetime.
+Not shown here, the behavior in TQM disks continues as long as 10 Myr.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_time_final_mass.pdf}
+    \caption[Merger remnant mass versus disk lifetime]{\textbf{Merger remnant mass versus disk lifetime.}
+    \textit{Top row:} SG disk setups with $\tauAGN=$ 0.25, 0.5, and 0.75 Myr.
+    \textit{Bottom row:} TQM disk setups with $\tauAGN=2.5$, 3, and 5 Myr.
+    Hierarchical mergers drive up the mass of remnants in SG disks with increased lifetime, whereas TQM disks quickly merge BH on near circular orbits but low migration rates suppresses subsequent interactions to increase remnant masses beyond $\sim80\,\Msun$.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:time-mass}
+\end{figure}
+
+\subsubsection{Accretion Disk Radius}
+Next, we vary the radial extent of each disk model to $R_{\rm out}=2\times10^4$ and $7\times10^4$ $\Rg$ by changing \code{disk_radius_outer}, which affects the initial number of BH in the disk.
+\Fig{fig:radius} shows the relevant results.
+
+Smaller disks have a smaller cross section with the NSC and will naturally result in a reduction in the BH merger rate.
+This is reflected in the SG setup with $R_{\rm out} = 2\times10^4\,\Rg$ (top left, \code{sg_r2e4}).
+Note the number of mergers \emph{also} decreases with larger disk size (top right, \code{sg_r7e4}).
+In a slightly larger disk, we do not add significantly more BH.
+This is because our default BH radial density function has a power-law break at $R=5 \times 10^{4}r_{g}$, with a steeper power-law index outside ($-2.5$ compared to inside $-7/4$).
+As a result, even though the disk is larger, we add proportionally fewer BH and so the average spacing of BH over the range $[\code{disk_radius_inner, disk_radius_outer}]$ must \emph{increase} in our model, thus driving down the average rate.
+
+The line fit for mergers produced in a smaller disk (\code{sg_r2e4}) \emph{increases} to $d\chi/dq=-0.45\pm0.02$ due to a more equal number of mergers in the 1g and $\geq$2g populations as compared to \sgdefault.
+A larger disk in \code{sg_r7e4} disk produces a similar slope to \sgdefault\ since the number of events in each population decreased proportionally.
+
+The already low number of mergers in the TQM disk decreases further with a smaller disk radius (bottom left, \code{tqm_r2e4}).
+While the SG model saw a \emph{decrease} in mergers for larger disks, the TQM model sees a constant number of mergers when $R_{\rm out}=7\times10^4\Rg$ (bottom right, \code{tqm_r7e4}), due to more room for out-migrating BH due to thermal torques in the low opacity outer disk.
+
+Statistical measures for 1g mergers in the TQM models do not significantly change, but the low number of hierarchical mergers causes ($\barq$(1g), $\barXeff$(1g)) to fluctuate from ($0.71\pm0.17, 0.43\pm0.09$) in \code{tqm_r2e4} to ($0.55\pm0.14, 0.44\pm0.08$) in \tqmdefault\ and ($0.65\pm0.20, 0.36\pm0.09$) in \code{tqm_r7e4}.
+This has a strong influence on the measured slope which decreases as radius increases $d\chi/dq=[-0.13\pm0.02, -0.03\pm0.01, -0.05\pm0.01]$.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_radius.pdf}
+    \caption[Varying disk radius]{\textbf{Varying disk radius.}
+    SG and TQM disks with radii $r = (2\times 10^{4}, 5\times 10^{4},\,10^{5})\ R_{\rm g}$.
+    Both decreases and increases in disk radius result in fewer mergers.
+    Model name left-to-right, top-to-bottom: \code{sg_r2e4}, \code{sg_default}, \code{sg_r7e4}, \code{tqm_r2e4}, \code{tqm_default}, and \code{tqm_r7e4}.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:radius}
+\end{figure}
+
+
+Fig.~\ref{fig:radius-mass} shows final masses of the mergers as a function of merger location for the corresponding runs shown in Fig.~\ref{fig:radius}.
+The trap at $700\,\Rg$ and migration slowdown at $10^3\,\Rg$ produce the majority of hierarchical mergers and high mass remnants in the SG disk, while the slow migration rate in the TQM disk reduces the traps' effectiveness.
+
+For an SG disk, decreasing the radius to $2\times10^4\,\Rg$ produces roughly half the number of mergers (750) versus the default (1412) with radius set to $5\times10^4\,\Rg$, while increasing the radius to $7\times10^4\,\Rg$ significantly reduces the number (214).
+As outlined above, average initial separations between BH increase, suppressing e.g. the importance of traps for a default  $\tauAGN = 0.5$ Myr.
+An increase to $\tauAGN =0.6$ Myr, yields more time to migrate, producing 489 mergers and the hierarchical population reemerges near the trap.
+
+Changing the disk size in a TQM model produces slightly different behavior for our choices of radii.
+Like SG disk, smaller TQM disks overlap with less of the NSC, but the low inner disk opacity reduces the effectiveness of migration and traps and produces only 194 mergers relative to the default size that produces 615 mergers.
+By contrast, the higher opacity at large radii in TQM disks drives migration to compensate for the effect of increased separation between BH in large disks described above and produces 614 mergers with the same disk lifetime.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_radius_final_mass.pdf}
+    \caption[Merger remnant mass vs. disk radius]{\textbf{Merger remnant mass versus disk radius.} Left column shows outer disk radii set to $2\times10^4\,\Rg$ compared to the default $5\times10^4\,\Rg$ in the center column, and $7\times10^4\,\Rg$ in the right column.
+    SG disks produces less mergers with both changes for SG (top row).
+    Shrinking a TQM (bottom row) disk also produces less mergers, but extending this disk includes more of the optically thick outskirts that drives migration in this model so the number of mergers is the same as the default case.
+    Markers are as in \Fig{fig:default-imf}.}
+    \label{fig:radius-mass}
+\end{figure}
+
+\subsubsection{Initial Black Hole Spin Magnitude Distribution}
+Here we explore the influence of the allowed initial BH spin magnitude distribution.
+We vary the width of the initial Gaussian distribution between $\sigma_\chi=[0.02,0.2]$ to reflect a range of natal spin magnitudes by setting the parameter \code{nsc_bh_spin_dist_sigma}.
+
+In \Fig{fig:spin} we see each test produces the usual population islands as the default setups.
+For SG disks, no significant change occurs in $\barq$ for any of the generational subpopulations (top left: \code{sg_s0p02} and top right: \code{sg_s0p20}).
+However, we see the spread in $\Xeff$ for the 1g population is greatly impacted and grows as the spin width increases from $\sigma_\chi= 0.02$ to $0.20$.
+The standard deviation on $\barXeff$(1g) reflects this trend, tightening to $-0.01\pm0.02$ when $\sigma_\chi = 0.02$ and broadening to $-0.02\pm0.10$ when $\sigma_\chi = 0.20$.
+While no statistically significant change is seen in $\barXeff$ for the hierarchical populations, tighter initial distributions of spin magnitude (smaller $\sigma_\chi$) cause their islands to be more concentrated, whereas a larger $\sigma_\chi$ increases their scatter.
+
+The TQM model shows similar behavior as the SG disk when varying $\sigma_\chi$ (bottom left: \code{tqm_s0p02} and bottom right: \code{tqm_s0p20}).
+The $\barq$ of 1g mergers stays the same, but the variance on $\barXeff$ is correlated with increasing $\sigma_\chi$.
+For $\sigma_\chi=0.02,\ 0.10,\ 0.20$, $\barXeff$(1g)$=0.01\pm0.04,\ 0.01\pm0.07,\ 0.02\pm0.12$, respectively, but the number of hierarchical mergers is too low to make any robust claims regarding their means.
+
+If the detected population has a component with a wide distribution of $\Xeff$ centered around $\Xeff=0$, for the AGN channel this implies 1g BH in NSCs have a broad range of initial spin values, possibly reflecting details of star formation and/or gas accretion in the galactic nucleus.
+If the measured effective spins follow narrow distributions (both centered on $\Xeff \sim 0$ and at higher $\Xeff$), then 1g BH in NSCs are likely born with a very narrow range of spins (close to zero).
+Constraints from future BBH catalogs (O4 and O5) on the width of the $\Xeff$ distribution will allow us to test models of BH birth and evolution in galactic nuclei.
+
+Changing $\sigma_\chi$ does not appear to significantly impact the expectation values for either disk model.
+But the intrinsic distributions in spin are likely $\sigma_\chi \leq 0.2$ in SG models since the standard deviation on $\Xeff$ for the 1g population resulting from this setting extends to negative $\Xeff$ about as far as \citet[]{Callister+21} report is observed.
+TQM models produce similar results for 1g mergers, but the number of hierarchical events remains limited.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_spin.pdf}
+    \caption[Exploring impact of initial black hole spin magnitude distribution]{\textbf{Varying the width of the Gaussian distribution for initial BH spin magnitudes.}
+    \textit{Top left:} SG disk with spin magnitude distribution $\sigma_\chi = 0.02$ (\code{sg_0p02}).
+    \textit{Top-center:} Default SG disk with $\sigma_\chi=0.1$ (\code{sg_default}).
+    \textit{Top-right:} SG disk with $\sigma_\chi = 0.2$ (\code{sg_0p2}).
+    \textit{Bottom row:} Same as top row but for a TQM disk model (\code{tqm_0p02}, \code{tqm_default}, \code{tqm_0p2}).
+    Narrower (wider) spin magnitude distributions primarily affect the 1g population by narrowing (widening) the distribution in $\Xeff$.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:spin}
+\end{figure}
+
+
+
+% Retrograde binaries
+\subsubsection{Impact of Retrograde Binaries}
+\label{sec:retro-results}
+We now relax the default requirement for prograde BBH only and test a retrograde fraction $\fret=0.1,0.5.$ Retrograde BBH orbit retrograde around their center of mass, but prograde around the SMBH.
+Control this parameter in \mcfacts with \code{fraction_bin_retro}.
+A perfectly symmetric  distribution in $\Xeff$ around $\Xeff \sim 0$ consistent with is a $d\chi/dq$ slope of zero.
+This should by definition be the case for the $\fret=0.5$ (see \Fig{fig:retro}, where $d\chi/dq=0.0\pm0.01$).
+
+The top row of \Fig{fig:retro} shows the results for increasing $\fret$ in a SG disk.
+In each case, the 1g population remains symmetric about $\Xeff=0$ without change from the fiducial setup.
+When $\vec{L}_{\rm bin}<0$ and $\chi_{1,2}>0$ for both BH, $\Xeff$ will be negative.
+This is also true when $q$ is sufficiently small and the more massive BH's spin is pointed opposite to $\vec{L}_{\rm bin}$.
+Increasing  $\fret=0$ (top left, $\sgdefault$) to $\fret=0.1$ (top center, \code{sg_fr0p1}), primarily affects the mean effective spin of the hierarchical population, and we see a handful of these appear on the left side of the plot for $\fret=0.1$.
+For all hierarchical mergers, $\barXeff$ decreases with increasing $\fret$ as more negative $\Xeff$ events occur, but the standard deviation increases drastically as a result.
+For $\fret=0$, $\barXeff$(2g)$=0.44\pm0.08$, but when $\fret=0.1$, $\barXeff$(2g)$=0.38\pm0.27$.
+The $\geq$3g population sees even greater uncertainty increases with $\barXeff(\geq$3g)$=0.61\pm0.13$ changing to $0.44\pm0.42$.
+
+The change in $d\chi/dq$ reflects these shifts by drastically shifting towards negative $\Xeff$, flattening from $-0.28\pm0.01$ to $-0.24\pm0.01$.
+Even a few negative $\Xeff$ hierarchical events skew the measurement.
+
+Increasing $\fret \rightarrow 0.5$ continues this trend (top right, \code{sg_fr0p5}).
+The symmetry about $\Xeff=0$ we have seen in the 1g population now extends to the hierarchical mergers.
+Effectively $\fret=0.5$ is equivalent to a gas-free hierarchical merger environment.
+Since half of the hierarchical mergers now have $\Xeff<0$, the mean expectation value shifts to $\barXeff$(2g)$=-0.02\pm0.46$.
+There are no underlying differences to the hierarchical mergers compared to $\sgdefault$ (top left), which can be seen by taking the absolute value of the effective spin before calculating the mean $\overline{|\Xeff|}$(2g)$=0.45\pm0.08$ -- consistent with $\barXeff=0.44\pm0.08$ seen in \sgdefault.
+Similar behavior is reflected in the $\geq$3g population with $\barXeff(\geq$3g)$=0.06\pm0.63$ vs.
+$\overline{|\Xeff|}(\geq$3g)$=0.61\pm0.14$ when $\fret=0.5$ (see Table.~\ref{tab:popstats}).
+
+The symmetry in the hierarchical population flattens the slope to $d\chi/dq=-0.24\pm0.01$ when $\fret=0.1$ and $0.00\pm0.01$ when $\fret=0.5$.
+Retrograde BBH are not expected to form this frequently in an AGN disk, but as one allows for more to occur by increasing $\fret$, the number of negative $\Xeff$ events increases, and the measured slope flattens.
+
+The bottom row of \Fig{fig:retro} shows the results for the TQM model.
+As in the SG model, changing $\fret$ to 0.1 (bottom center, \code{tqm_fr0p1}) produces some $\Xeff<0$ hierarchical mergers, and $\fret=0.5$ (bottom right, \code{tqm_fr0p5}) increases this number further, while $\barXeff({\rm 2g})$ decreases to $0.17\pm0.37$ for $\fret=0.1$ and to $-0.07\pm0.40$ when $\fret=0.5$.
+These shifts lead to decreasing slopes: $d\chi/dq=[-0.28\pm0.01, -0.24\pm0.01, 0.00\pm0.01]$.
+Though this disk model is plagued by low number statistics for hierarchical mergers, a small $\fret$ still greatly affects the measurement of $d\chi/dq$.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_retro.pdf}
+    \caption[Varying the retrograde binary black hole fraction]{\textbf{Varying the retrograde BBH fraction.}
+    \textit{Left column:} Default SG and TQM disk setups where no retrograde BBH form ($\fret=0$, \code{sg_default}).
+    \textit{Center column:}  Retrograde fraction is $\fret=0.1$ (\code{sg_fr0p1}).
+    \textit{Right column:} Half of BBH are retrograde ($\fret=0.5$)  (\code{sg_fr0p5}).
+    Increasing allowed retrograde fraction splits the hierarchical population to negative $\Xeff$ and flattens the slopes of the anti-correlation for SG-like disks.
+    The TQM model (bottom row, \code{tqm_default}, \code{tqm_fr0p1}, \code{tqm_fr0p5}) reflects this behavior but the hierarchical population still suffers from low numbers.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:retro}
+\end{figure}
+
+
+
+
+\subsubsection{Black Hole Orbital Eccentricity}
+
+In this section we explore the effects of changing the maximum initial orbital eccentricity $\emax$ of the embedded BH.
+Migration does not occur unless a BH has been circularized, defined when $e_{\rm crit}\leq0.01$.
+For eccentric prograde BH, mass accretion is retrograde, spinning down embedded BH.
+Thus, more eccentric BH that spend a longer time circularizing experience more spin-down before they can migrate and form BBH.
+Control this parameter in \mcfacts with \code{disk_bh_orb_ecc_max_init}.
+
+\subsubsubsection{SG disk: $\emax= 0.1, 0.3, 0.5$}
+
+\Fig{fig:ecc-sg} shows the results from a BH population with orbits constrained to be more circular ($\emax=0.1$, left panel, \code{sg_e0p1}) or more eccentric ($\emax=0.5$, right panel, \code{sg_e0p5}).
+Starting from lower $\emax$, the 1g population becomes saturated across the entire range of possible mass ratios, but no change occurs to the populations expectation values for $q$ or $\Xeff$.
+The same is true for the 2g and $\geq$3g populations.
+The slope does slightly steepen from $d\chi/dq=-0.28\pm0.01$ to $-0.35\pm0.01$ due to the relative increase in number of hierarchical mergers.
+Conversely, the number of mergers decreases in each group for a larger $\emax$, and the suppression of hierarchical mergers flattens the slope to $-0.19\pm0.03$.
+
+Given a fixed $\tauAGN$, starting from orbits with a lower $\emax$ reduces time spent circularizing, jump starts the migration process, and increases the pool of BH available to form BBH at early times.
+Since more BH spend a longer time participating in mergers, the $\geq$3g hierarchical merger population is able to reach lower mass ratios and higher effective spins.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_ecc_sg.pdf}
+    \caption[Varying the initial maximum orbital eccentricity]{\textbf{Varying the initial maximum orbital eccentricity.}
+    SG disk with NSC initial eccentricity capped at $e_{\rm max}=0.1$ (left, \code{sg_e0p1}), 0.3 (center, \code{sg_default}), and 0.5 (right, \code{sg_0p5}).
+    The number of mergers is inversely proportional to initial eccentricity.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:ecc-sg}
+\end{figure}
+
+\subsubsubsection{SG disk with thermal distribution: $\emax=0.7$}
+
+A thermal NSC is either one that has not had substantial recent AGN cooling activity or one that had sufficient time between active phases for dynamical encounters to erase the circularization caused by previous AGN activity and has median orbital eccentricity $\overline{e} \sim 0.7$.
+\Fig{fig:ecc-sg-thermal} shows an SG accretion disk interacting with a thermal BH population for $\tauAGN=0.5$ Myr (center panel, \code{sg_e0p7}) suppresses almost all mergers.
+However, if $\tauAGN=0.7$ Myr (right panel, \code{sg_e0p7_t0p75}) there is sufficient time to damp embedded BH orbits to broadly match \sgdefault\ results.
+However, the 1g population qualitatively shifts towards negative $\Xeff$ --- though less so quantitatively (left panel: $\barXeff$(1g)$= -0.01\pm0.05$, right panel: $-0.02\pm0.06$) --- since accretion-driven spin down during a lengthy circularization period leads to initially highly eccentric BHs forming BBH with spins pointing opposite to the binary orbital angular momentum.
+This can be tested in LVK O4.
+
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_ecc_sg_thermal.pdf}
+    \caption[Initial thermal population for varying lifetimes]{\textbf{Thermal Population with varying lifetimes.}
+    \textit{Left:} Default SG disk with $\emax=0.3$ (\code{sg_default}).
+    \textit{Center:} SG disk interacting with a thermal NSC with $\emax=0.7$ (\code{sg_e0p7}).
+    \textit{Right:} Thermal NSC with SG disk lifetime increased to $\tauAGN=0.75$ Myr (\code{sg_e0p7_t0p75}).
+    A more eccentric initial BH population takes longer to circularize which increases the time to produce mergers.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:ecc-sg-thermal}
+\end{figure}
+
+\subsubsubsection{TQM disk: $\emax = 0.015, 0.05, 0.1$}
+
+The default TQM setup uses a lower default eccentricity maximum $\emax = 0.05$ which we now vary between $\emax=0.015,0.1$.
+Examining \Fig{fig:ecc-tqm} shows that for $\emax=0.1$ (right panel, \code{tqm_e0p1}) the hierarchical merger population is unchanged, and the 1g merger population drops by half.
+Even this small $\emax$ almost significantly suppresses mergers.
+Conversely, when $\emax = 0.015$ (left panel, \code{tqm_e0p015})---only $\Delta e = 0.005$ above our eccentricity criterion for treating orbits as circular---we see for the first time in any TQM set-up, a distribution of hierarchical mergers that appears remotely similar to the SG model default.
+The 1g population is densely concentrated about $\Xeff=0$ with $\barXeff({\rm 1g})=0.02\pm0.06$ over the range of mass ratios $0.25 \lesssim q \leq 1$ with $\barq({\rm 1g})=0.68\pm0.21$.
+The hierarchical population is finally large enough for more robust expectation values of $\barXeff({\rm 2g})=0.35\pm0.16$ and $\barq({\rm 2g})=0.59\pm0.19$.
+However, there are over 60 times as many 1g mergers, and the anti-correlation's slope is flat at $d\chi/dq=-0.05\pm0.00$.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_ecc_tqm.pdf}
+    \caption[Varying the initial maximum orbital eccentricity]{\textbf{Varying the initial maximum orbital eccentricity.}
+    TQM disk with NSC initial eccentricity capped at $e_{\rm max}=0.015$ (left \code{tqm_e0p015}), 0.05 (center \code{tqm_default}), and 0.1 (right, \code{tqm_e0p1}).
+    The number of mergers is inversely proportional to initial eccentricity, and an extremely low eccentricity is required for the TQM model to produce an appreciable number of hierarchical mergers as opposed to the SG model.
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:ecc-tqm}
+\end{figure}
+
+
+\subsubsubsection{TQM disk with circular orbits: $\emax=0$}
+
+The TQM model has been unable to produce any significant number of hierarchical mergers with a slightly eccentric initial NSC.
+Here we explore how $\tauAGN$ affects the $q$--$\Xeff$ plane, when the NSC starts from circularized orbits.
+
+\Fig{fig:ecc-tqm-circular} shows the results from evolving the circular NSC ($\emax=0$) in a TQM disk for $\tauAGN=[1,3]$ Myr compared with our default setup.
+The only difference between the 3 Myr run (center panel, \code{tqm_e0}) and the default setup (right panel) is the initial maximum eccentricity, yet already within 1 Myr the $\geq$2g population begins to populate more similar to \code{tqm_e0p015}.
+At 1 Myr, the 1g population is still highly concentrated in effective spin, expected at $\barXeff({\rm 1g})=0.03\pm0.08$ and $\barq({\rm 1g})=0.68\pm0.21$.
+The mean effective spin for 2g hierarchical events is $\barXeff({\rm 2g})=0.53\pm0.12$, and the mean mass ratio is $\barq({\rm 2g})=0.63\pm0.20$.
+The hierarchical population does not affect anti-correlation's slope because there are almost 4000 1g mergers compared to the 23 2g mergers, causing the slope to flatten $d\chi/dq=-0.07\pm0.00$.
+After 3 Myr the number of 2g mergers increases to 89, and 3 $\geq$3g mergers occurred---the most in any TQM model.
+$\barXeff$(2g) moves to $0.45\pm0.14$ and is slightly larger at $0.71\pm0.03$ for $\geq$3g.
+The additional 69 $\geq$2g mergers and only $\sim$150 additional 1g mergers slightly shifts the slope to $d\chi/dq=-0.09\pm0.00$
+
+By skipping the damping process for eccentric orbits, a circularized population of BH interacting within a TQM-like disk can immediately migrate, form binaries, and merge.
+By jump-starting the merger process, then number of hierarchical mergers produced within 1 Myr is four times larger than when the BH have even a tiny initial eccentricity ($\emax=0.015$).
+Though 3 Myr increases the hierarchical population, they primarily occur near $R=2\times10^4\,\Rg$, and far fewer higher generation ($\geq 3$g) mergers occur compared to SG disks which benefit from the trap.
+This behavior suggests TQM-like disks quickly exhaust the embedded 1g population, and are unable to continue merging higher generation BBH, because of slow (inefficient) migration in the outer disk.
+Thus, low density disks with dynamically cooled populations could contribute to the 1g population without significantly contributing to high mass BBH mergers.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch_qxeff_figs/p2_ecc_tqm_circular.pdf}
+    \caption[Initially circular orbits for varying lifetimes]{\textbf{Initially circular orbits with varying AGN lifetimes.}
+    \textit{Left:} TQM disk evolved for $\tauAGN=1$ Myr (\code{tqm_e0_t1}).
+    \textit{Center:} Setup same as \tqmdefault but with circular BH orbits ($\tauAGN=3$ Myr; \code{tqm_e0}).
+    \textit{Right:} Default TQM setup where $\tauAGN=3$ Myr and initial eccentricity is capped at $\emax=0.05$ (\code{tqm_default}).
+    Markers are as in \Fig{fig:default-imf}.
+    See Table~\ref{tab:run-parameters} for unique setup parameters and Table~\ref{tab:popstats} for population statistics.}
+    \label{fig:ecc-tqm-circular}
+\end{figure}
+
+
+\subsection{Discussion}
+\label{sec:discussion-qxeff}
+One of the most intriguing results to emerge from the LVK O3 GW results was an apparent anti-correlation between BBH mass ratio ($q=M_{2}/M_{1}$) and the BBH effective spin \citep[$\Xeff$,][]{Callister+21}.
+At first glance this seems unexpected from most channels.
+The AGN channel was recognized as a possible source of such an anti-correlation simply because: a) the primary BH ($M_{1}$) in BBH should spend longer in the AGN disk and so, b) primary BH ($M_{1}$) spins should be biased towards alignment with the orbital angular momentum of the disk (and the BBH) \citep[e.g.][]{McKernan+22:q-Xeff,Santini+23, DittmannDempseyLi24}.
+Here we have demonstrated the form of the $q$--$\Xeff$ parameter space distribution as a function of different disk and model choices for the AGN channel.
+
+First, and most importantly, our default choice of a SG disk run for 0.5 Myr with a $\gamma=2$ IMF seems to be a reasonable fit to the observed $q$--$\Xeff$ distribution (see \Fig{fig:default-imf} top left panel).
+\citet{Callister+21} find an overall anti-correlation fit of $d\chi/dq \sim -0.46^{+0.29}_{-0.28}$ for their distribution when they exclude GW190814.
+However, when they \emph{include} GW190814, they find $d\chi/dq=-0.28^{+0.31}_{-0.28}$ which matches $d\chi/dq=-0.28\pm0.01$ from our default SG model.
+This highlights an important point: GW190814 is difficult to reproduce commonly in any other channel, however in AGN (depending on choice of IMF) such low $q \sim 0.1$ events can occur at the few percent level \citep{Secunda+19, McKernan+20b,TagawaHaimanKocsis20}.
+
+Second, it is clear that the AGN channel produces islands of population in $q$--$\Xeff$ parameter space.
+Evidently the 1g mergers tend (at least in dense SG-like disks) to be concentrated around $\Xeff \sim 0$.
+Higher generation hierarchical mergers ($\geq$2g) tend to live in islands at higher $\Xeff$.
+Indeed, the structure, location, and density of these population islands is what drives the $d\chi/dq$ in the AGN channel.
+For example, a steep IMF ($\gamma=2$) tends to drive $q \sim 0.5$ mergers, whereas a flatter IMF ($\gamma=1$) drives lower q mergers and drives the average ($d\chi/dq$) slope to more negative values (compare Fig.~\ref{fig:default-imf} top panels).
+Future LVK results (e.g.
+from O4) can constrain the presence (or not) of such islands.
+
+Third, while higher-density SG disks can reproduce the $d\chi/dq$ correlation, we find that low-density AGN disk models can only approach this correlation if the initial BH population has been dynamically cooled (compare e.g.
+Fig.~\ref{fig:default-imf} bottom panels and Fig.~\ref{fig:ecc-tqm-circular}).
+Indeed some level of dynamical cooling is also preferred in denser SG-like disks (see Fig.~\ref{fig:ecc-sg}).
+Only very small initial eccentricities for BH embedded in TQM-like disk models can reproduce the observed $d\chi/dq$ anti-correlation  \citep{Callister+21}.
+Lower surface density disk models like TQM take longer to circularize and migrate embedded BH, leading to lower merger rates than SG-like models.
+If we extend the disk lifetime ($\tauAGN$), we can drive a higher BBH merger rate, but at the expense of spin down due to retrograde accretion from the gas disk for an initially eccentric population (see Fig.~\ref{fig:time} bottom panels).
+So it is unlikely that low density disks are a significant contributor to the observed LVK rate among higher mass mergers unless their initial populations are dynamically cold (low $e$).
+
+Fourth, as the width of BH initial spin distribution $\sigma_\chi$ increases, the width of the islands in $q$--$\Xeff$ parameter space increases (see gold, purple and red populations in  Fig.~\ref{fig:spin}).
+Larger values of $\sigma_\chi$ lead to a larger weighting of the 1g population to negative $\Xeff$.
+We constrain $\sigma_\chi \leq 0.2$ in the AGN channel from LVK observations.
+
+Fifth, the gradient ($d\chi/dq$) in the AGN channel is also driven by the ratio ($\fret$) of retrograde/prograde BBH mergers.
+For $\fret=[0,0.1,5]$, the gradient $d\chi/dq=[-0.28\pm0.01,\ -0.24\pm0.01,\ 0.00\pm0.01]$ for our default model in an SG disk.
+As \citet{Callister+21} find $d\chi/dq = -0.28^{+0.31}_{-0.28}$ from O3, a low value of $\fret$ is preferred, but we cannot exclude $\fret \sim 0.5$.
+The value of $\fret$ for mergers in AGN disks remains an unsolved problem.
+The change in separation between BBH formation and merger is 6-7 orders of magnitude and the details of what happens during hardening in AGN remain unclear.
+BBH formation via GW capture in gas disks can be either prograde or retrograde \citep[e.g.][]{DeLaurentiis+23,Whitehead+24,QianLiLai24}.
+However, retrograde BBH may have their eccentricity pumped \citep{Li+22-bbh-evo,Calcino+23}, and may therefore harden quickly towards merger.
+However, there is much debate as to whether retrograde BBH are preferentially separated as their eccentricity is pumped \citep{Wang+21}, or whether they are flipped to prograde due to dynamical encounters \citep{Samsing+22,McKernanFord24}.
+The slope of the ($d\chi/dq$) anti-correlation that emerges from larger data sets (O4, O5) will allow us to directly test models of the retrograde fraction of BBH in the AGN channel.
+
+Sixth, disk size impacts both the overall rate of BBH mergers and the $q$--$\Xeff$ distribution (see \Fig{fig:radius}).
+A small average disk size generates a plausible $q$--$\Xeff$ distribution but a far lower merger rate.
+
+Seventh, more massive primaries tend to produce mergers with higher $\Xeff$ (see Fig.~\ref{fig:default-primarymass-xeff}) since they are more likely to be 2g or $\geq$3g and thus had their spins aligned with the disk.
+
+\subsection{Conclusion}
+The observed LVK BBH rate of $\mathcal{R} \sim 25\,{\rm Gpc}^{-3} {\rm yr}^{-1}$ \citep{Abbott+23-O3b} originates from a variety of formation channels, potentially including some fraction from AGN.
+From \citet{McKernan+25-mcfactsI} the merger rates for our default SG disk is $\mathcal{R} \sim 20\,{\rm Gpc}^{-3} \rm{yr}^{-1}$, whereas the default TQM rate is only $\mathcal{R} \sim 0.1\,{\rm Gpc}^{-3} \rm{yr}^{-1}$.
+SG-like AGN are efficient at making IMBH, driving low $q$ and high $\Xeff$ mergers, whereas low density/opacity, TQM-like disks are far less efficient producers of hierarchical merger events.
+As demonstrated, features in the $q$--$\Xeff$ plane due to AGN channel BBH mergers depend strongly on the disk model, so LVK O4 results will allow us to constrain possible AGN disk models.
+
+ 
+
+\begin{sidewaystable}
+\centering
+{\footnotesize
+\begin{tabular}{r|c|c|ccc|ccc|ccc}
+\hline\hline
+Run & Fig. & $d\chi/dq$ & \multicolumn{3}{c}{1g-1g Mergers} & \multicolumn{3}{c}{2g-[1,2]g Mergers} & \multicolumn{3}{c}{$\geq$3g-Ng Mergers} \\
+ &  &  & N & $\barq$ & $\barXeff$ & N & $\barq$ & $\barXeff$ & N & $\barq$ & $\barXeff$ \\
+    \hline
+    \code{sg_default} & \ref{fig:default-imf},\ref{fig:default-radius-time},\ref{fig:default-primarymass-xeff} & $-0.28\pm0.01$ & 1093 & $ 0.67\pm0.19$ & $-0.02\pm0.05$ & 244 & $ 0.51\pm0.18$ & $ 0.44\pm0.08$ & 73 & $ 0.45\pm0.22$ & $ 0.61\pm0.13$ \\
+    \code{tqm_default} & \ref{fig:default-imf},\ref{fig:default-radius-time},\ref{fig:default-primarymass-xeff} & $-0.03\pm0.01$ & 606 & $ 0.68\pm0.20$ & $ 0.01\pm0.07$ & 7 & $ 0.55\pm0.14$ & $ 0.44\pm0.14$ & 0 & --- & --- \\
+    \hline
+    \code{sg_g1} & \ref{fig:default-imf} & $-0.33\pm0.01$ & 1925 & $ 0.63\pm0.21$ & $-0.01\pm0.06$ & 556 & $ 0.50\pm0.21$ & $ 0.46\pm0.10$ & 207 & $ 0.44\pm0.22$ & $ 0.63\pm0.16$ \\
+    \code{tqm_g1} & \ref{fig:default-imf} & $-0.05\pm0.01$ & 683 & $ 0.65\pm0.23$ & $ 0.01\pm0.07$ & 18 & $ 0.55\pm0.27$ & $ 0.37\pm0.12$ & 0 & --- & --- \\
+    \hline
+    \code{sg_t0p25} & \ref{fig:time},\ref{fig:time-mass} & $-0.05\pm0.07$ & 20 & $ 0.70\pm0.19$ & $-0.00\pm0.06$ & 1 & $ 0.63\pm0.00$ & $ 0.47\pm0.00$ & 0 & --- & --- \\
+    \code{sg_t0p75} & \ref{fig:time},\ref{fig:time-mass} & $-0.59\pm0.01$ & 2246 & $ 0.69\pm0.19$ & $-0.02\pm0.05$ & 1004 & $ 0.51\pm0.18$ & $ 0.47\pm0.09$ & 756 & $ 0.44\pm0.22$ & $ 0.67\pm0.15$ \\
+    \code{tqm_t2p5} & \ref{fig:time},\ref{fig:time-mass} & $-0.05\pm0.01$ & 572 & $ 0.67\pm0.21$ & $ 0.02\pm0.06$ & 6 & $ 0.48\pm0.24$ & $ 0.36\pm0.20$ & 0 & --- & --- \\
+    \code{tqm_t5} & \ref{fig:time},\ref{fig:time-mass} & $-0.04\pm0.01$ & 620 & $ 0.67\pm0.21$ & $ 0.00\pm0.10$ & 17 & $ 0.52\pm0.23$ & $ 0.36\pm0.21$ & 0 & --- & --- \\
+    \hline
+    \code{sg_r2e4} & \ref{fig:radius},\ref{fig:radius-mass} & $-0.45\pm0.02$ & 465 & $ 0.60\pm0.19$ & $ 0.02\pm0.06$ & 187 & $ 0.46\pm0.17$ & $ 0.48\pm0.08$ & 96 & $ 0.47\pm0.25$ & $ 0.62\pm0.15$ \\
+    \code{sg_r7e4} & \ref{fig:radius},\ref{fig:radius-mass} & $-0.25\pm0.03$ & 198 & $ 0.70\pm0.19$ & $-0.02\pm0.05$ & 30 & $ 0.54\pm0.20$ & $ 0.45\pm0.10$ & 11 & $ 0.42\pm0.23$ & $ 0.63\pm0.10$ \\
+    \code{tqm_r2e4} & \ref{fig:radius},\ref{fig:radius-mass} & $-0.13\pm0.02$ & 185 & $ 0.70\pm0.21$ & $ 0.04\pm0.07$ & 7 & $ 0.71\pm0.17$ & $ 0.43\pm0.09$ & 0 & --- & --- \\
+    \code{tqm_r7e4} & \ref{fig:radius},\ref{fig:radius-mass} & $-0.05\pm0.01$ & 600 & $ 0.66\pm0.21$ & $ 0.01\pm0.07$ & 12 & $ 0.65\pm0.20$ & $ 0.36\pm0.09$ & 0 & --- & --- \\
+    \hline
+    \code{sg_s0p02} & \ref{fig:spin} & $-0.30\pm0.01$ & 1234 & $ 0.68\pm0.20$ & $-0.01\pm0.02$ & 262 & $ 0.50\pm0.19$ & $ 0.46\pm0.07$ & 67 & $ 0.42\pm0.18$ & $ 0.62\pm0.14$ \\
+    \code{sg_s0p20} & \ref{fig:spin} & $-0.32\pm0.01$ & 1263 & $ 0.69\pm0.19$ & $-0.02\pm0.10$ & 299 & $ 0.50\pm0.19$ & $ 0.47\pm0.10$ & 87 & $ 0.47\pm0.22$ & $ 0.64\pm0.13$ \\
+    \code{tqm_s0p02} & \ref{fig:spin} & $-0.04\pm0.01$ & 595 & $ 0.70\pm0.20$ & $ 0.01\pm0.04$ & 12 & $ 0.61\pm0.17$ & $ 0.37\pm0.12$ & 0 & --- & --- \\
+    \code{tqm_s0p20} & \ref{fig:spin} & $-0.05\pm0.01$ & 586 & $ 0.67\pm0.21$ & $ 0.02\pm0.12$ & 9 & $ 0.47\pm0.19$ & $ 0.32\pm0.16$ & 0 & --- & --- \\
+    \hline
+    \code{sg_fr0p1} & \ref{fig:retro} & $-0.24\pm0.01$ & 1144 & $ 0.68\pm0.19$ & $-0.01\pm0.05$ & 265 & $ 0.50\pm0.19$ & $ 0.38\pm0.27$ & 69 & $ 0.43\pm0.22$ & $ 0.44\pm0.42$ \\
+    \code{sg_fr0p5} & \ref{fig:retro} & $0.00\pm0.01$ & 1177 & $ 0.70\pm0.19$ & $ 0.00\pm0.06$ & 255 & $ 0.51\pm0.19$ & $-0.02\pm0.46$ & 61 & $ 0.46\pm0.20$ & $ 0.06\pm0.63$ \\
+    \code{tqm_fr0p1} & \ref{fig:retro} & $-0.02\pm0.01$ & 580 & $ 0.67\pm0.21$ & $ 0.01\pm0.07$ & 4 & $ 0.51\pm0.19$ & $ 0.17\pm0.37$ & 0 & --- & --- \\
+    \code{tqm_fr0p5} & \ref{fig:retro} & $ 0.01\pm0.01$ & 601 & $ 0.67\pm0.21$ & $0.00\pm0.07$ & 13 & $ 0.50\pm0.15$ & $-0.07\pm0.40$ & 1 & $ 0.28\pm0.00$ & $-0.59\pm0.00$ \\
+    \hline
+    \code{sg_e0p1} & \ref{fig:ecc-sg} & $-0.35\pm0.01$ & 1778 & $ 0.68\pm0.20$ & $-0.01\pm0.05$ & 464 & $ 0.50\pm0.19$ & $ 0.46\pm0.08$ & 156 & $ 0.45\pm0.22$ & $ 0.62\pm0.14$ \\
+    \code{sg_e0p5} & \ref{fig:ecc-sg} & $-0.19\pm0.03$ & 231 & $ 0.71\pm0.17$ & $-0.02\pm0.06$ & 30 & $ 0.53\pm0.14$ & $ 0.44\pm0.07$ & 7 & $ 0.37\pm0.14$ & $ 0.54\pm0.10$ \\
+    \code{sg_e0p7} & \ref{fig:ecc-sg-thermal} & $-0.09\pm0.05$ & 51 & $ 0.65\pm0.18$ & $-0.03\pm0.07$ & 4 & $ 0.45\pm0.12$ & $ 0.45\pm0.06$ & 1 & $ 0.35\pm0.00$ & $ 0.62\pm0.00$ \\
+    \code{sg_e0p7_t0p75} & \ref{fig:ecc-sg-thermal} & $-0.36\pm0.02$ & 631 & $ 0.71\pm0.18$ & $-0.03\pm0.06$ & 161 & $ 0.52\pm0.18$ & $ 0.46\pm0.09$ & 61 & $ 0.50\pm0.20$ & $ 0.63\pm0.13$ \\
+    \hline
+    \code{tqm_e0p015} & \ref{fig:ecc-tqm} & $-0.05\pm0.00$ & 2041 & $ 0.68\pm0.21$ & $ 0.02\pm0.06$ & 34 & $ 0.59\pm0.19$ & $ 0.35\pm0.16$ & 3 & $ 0.41\pm0.35$ & $ 0.41\pm0.14$ \\
+    \code{tqm_e0p1} & \ref{fig:ecc-tqm} & $-0.01\pm0.01$ & 300 & $ 0.66\pm0.21$ & $ 0.00\pm0.08$ & 3 & $ 0.69\pm0.21$ & $ 0.49\pm0.10$ & 0 & --- & --- \\
+    \code{tqm_e0_t1} & \ref{fig:ecc-tqm-circular} & $-0.07\pm0.00$ & 3901 & $ 0.68\pm0.21$ & $ 0.03\pm0.08$ & 23 & $ 0.63\pm0.20$ & $ 0.53\pm0.12$ & 0 & --- & --- \\
+    \code{tqm_e0} & \ref{fig:ecc-tqm-circular} & $-0.09\pm0.00$ & 4066 & $ 0.68\pm0.21$ & $ 0.03\pm0.09$ & 89 & $ 0.59\pm0.21$ & $ 0.45\pm0.14$ & 3 & $ 0.49\pm0.05$ & $ 0.71\pm0.03$ \\
+\end{tabular}
+}
+\caption[Statistical estimates of the merger events]{We report the $d\chi/dq$ slope of a line fit to all mergers anchored through the point $(\Xeff,q)=(0,1)$, the number of mergers, the mean mass ratio $\barq$, mean effective spin $\barXeff$, and relevant standard deviations, for 1g-1g, 2g-Ng (2g-1g and 2g-2g), and $\geq$3g-Ng merger events in the associated figure.}
+\label{tab:popstats}
+
+\end{sidewaystable}
+
+

@@ -1,0 +1,232 @@
+%% Thesis file for NMSU Astronomy Dept. Thesises...Thesi...Theses...ya know that thing you exchange for a degree.
+% Edited May 2012 by J. Coughlin. % jlcough@nmsu.edu
+% Last edited by E. Dahl, Nov. 2021 (dahlemmak@gmail.com)
+% Requires the following packages (which should be default in your latex installation): latexsym, graphicx, amssym, natbib, verbatim, caption.
+% If you use includegraphics then you will also need graphics, and if you use epsfig you will also need epsfit, and likely epstopdf for pdflatex.
+% In testing there was some issues with mac users and the caption package, so I have included the needed caption*.sty files with this distro just in case to override the system default.
+% Note from Emma: no issues using this template in Overleaf as of 2021. 
+% Potentially helpful links:
+% Checklist, as of Nov. 2021 (double-check this is up to date when you use it): https://gradschool.nmsu.edu/Current%20Students/1.-Checklist-and-Procedures-for-Dissertation-Degree7.pdf
+% Info for preparing your manuscript for online submission to ProQuest: https://gradschool.nmsu.edu/Current%20Students/2.-Preparing-Your-Manuscript-for-Submission-Revised.pdf
+% Note that you used to have to print out your thesis and hand-deliver it to the grad school; as of ~2019 it's submitted online via this third party company, ProQuest. 
+% Another, bitter note from Emma: There used to be a very thorough formatting guide online, but disappeared from the grad school website a few years ago. I do have it though, so if you'd like to see it shoot me an email. In 2021 I pressed the grad school on providing any sort of official formatting guidelines and was told to look at the outdated, unhelpful templates on the grad school website. Note that in particular, the latex template provided by the grad school is out of date and actually incorrect, so don't use it as a reference. My method was to just write the document, submit it, and let them tell me if something was wrong, and it worked out alright. 
+\pdfminorversion=7
+\documentclass[12pt,preprint]{aastex-thesis}  % Using a custom-modified version of aastex v5.2. Need to use preprint style. (You can do preprint2 for double-column if you want for reading over - the bulk of thesis will come out okay in 2 columns but some pages won't, like the header pages and ToC).  Default is 12pt for NMSU thesis. Note this means that /normalsize is 12pt, /footnotesize is 10pt, /small is 11pt, /scriptsize is 8 pt. Having footnotes 10pt complies with NMSU thesis guidelines.
+
+\usepackage{epsfig}  % Allows you to use epsfig, of course.
+\usepackage{epstopdf}  % Converts eps files to pdf on the fly - have to have to work with pdflatex.
+%\usepackage{endfloat}  % If you uncomment this line, it moves all the figures to the end of the paper. Useful if you want to print thesis without figures in the way for proofreading or whatever
+\usepackage{graphics}  % Need if using /includegraphics, but not if using all /epsfig. Doesn't hurt to include though.
+\usepackage{natbib}  % Gotta have for bibtex of course.
+%\usepackage{iondefs} % Definitions of ion symbols if you work with ions a lot...isn't it little ionic? don't ya think? just a little ionic. Like a thousand tables, when all you need is a figure...
+%\usepackage{listings}  % Package to directly include source code in the document. E.x.  \lstinputlisting{MyProg.cpp}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+
+% added by Emma, might not be necessary for your needs:
+\usepackage{lineno} % in case you want to add them for anyone doing any editing
+\usepackage[utf8]{inputenc}
+\usepackage{adjustbox}
+\usepackage{booktabs}
+\usepackage{lscape} % for rotating tables
+\usepackage{rotating}
+\usepackage{longtable} 
+\usepackage{changepage}
+%\usepackage{supertabular,booktabs} % for wrapping tall tables
+\usepackage{upgreek} % for non-italic greek characters
+\usepackage{amsmath} % for multiple lines of math
+\usepackage{gensymb} % for degree symbol
+\usepackage{multirow} % to make table headers across multiple rows
+%\usepackage{float} % for forcing plots to go where i want
+
+
+
+\usepackage{caption}
+\usepackage{subcaption}
+%\usepackage{tabularx} % comment out if you want to use AAS deluxetable
+\usepackage{threeparttable}
+\usepackage{indentfirst}
+\usepackage{wasysym}
+\usepackage{lipsum}
+\usepackage{mwe}
+\usepackage{wrapfig}
+\usepackage{multicol}
+\usepackage[font=small]{caption}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{chngcntr}
+\usepackage{tablefootnote}
+%\usepackage{array}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{xfrac}
+\usepackage{xspace} % smartly puts space after macro
+
+% prevent tables from overflowing
+\usepackage{etoolbox}
+\AtBeginEnvironment{deluxetable}{\setlength{\tabcolsep}{4pt}}
+\AtBeginEnvironment{deluxetable}{
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{0.9}
+}
+
+\definecolor{xlinkcolor}{rgb}{0,0,0}
+\usepackage{hyperref} % Used to include URLs as footnotes
+\hypersetup{
+   colorlinks=true,
+   linkcolor=xlinkcolor,
+   citecolor=xlinkcolor,
+   filecolor=xlinkcolor,
+   urlcolor=xlinkcolor,
+   final=true,
+}
+
+\usepackage{etoc}
+
+\usepackage{url} % Used to include URLs as footnotes
+\urldef{\urlA}\url{http://irtfweb.ifa.hawaii.edu/cgi-bin/spex/find_a0v.cgi} % example
+
+%\linenumbers % don't include line numbers in the final draft
+
+
+\input{./cmds.tex}
+
+\begin{document}
+
+%\linenumbers % line numbers end before bibliography (turn off for submission)
+
+\setstretch{2}%\doublespace
+
+\pagenumbering{roman}  % Makes it so all the intro pages are numbered i, ii, iii, iv, etc.
+
+\pagestyle{empty}  % We don't want a page number (i) printed on the first page
+
+\include{title}  % Title Page - title.tex
+
+\pagestyle{plain} % Now start showing page numbers
+
+\include{committee}  % Grad School Committee Page - committee.tex (THIS REPLACES THE APPROVAL PAGE AS OF SPRING 2019) (e.g., Don't use the page in the math dept latex example thesis)
+
+\include{dedication}  % Dedication Page - dedica.tex
+
+\include{acknowledgements}  % Acknowledgements Page - ackno.tex
+
+\include{vita}  % Vita page - vita.tex
+
+\setstretch{1}%\doublespace
+
+\setstretch{2}%\begin{doublespace}
+\include{abstract}  % Abstract page - abstract.tex
+\setstretch{1}%\end{doublespace}
+
+\singlespace
+
+\tableofcontents  % Command to generate the table of contents
+\newpage
+\listoftables  % Generate the list of tables
+\addcontentsline{toc}{section}{LIST OF TABLES}  % Makes it so the table of contents includes an entry for the list of tables and the page number its on
+\newpage
+\listoffigures  % Generate the list of figures
+\addcontentsline{toc}{section}{LIST OF FIGURES}  % Ditto as above but for the list of figures.
+
+%\include{cd}  % Page if you have a CD included with your thesis. If you do not have a CD, comment out this line
+
+\newpage
+\phantomsection
+\include{abbrev}  % Page that contains a list of abbreviations. This is optional, so if you don't have many or don't want it, just comment out this line
+
+\newpage
+\phantomsection
+\include{symbols}
+
+\setstretch{2}%\doublespace
+
+\clearpage
+%\resetcounters  % Custom command in aastex-thesis to re-set counters so figures, tables, and equations are labeled 1.1, 1.2, 1.3, 2.1, 2.2, etc., instead of 1.1, 1.2, 1.3, 2.4, 2.5
+
+\pagenumbering{arabic}  % Make page numbers 1,2,3... starting with the Introduction
+
+\input{ch_intro}  % Introduction
+
+%% Repeat as many chapters as you need with
+% \clearpage
+% \resetcounters
+% \input{chapterX}
+
+%\clearpage
+%\resetcounters
+%\input{ch_agnbbh}
+
+\clearpage
+\resetcounters
+\input{ch_qxeff}
+
+\clearpage
+\resetcounters
+\input{ch_snhydro}
+
+\clearpage
+\resetcounters
+\input{ch_snrt}
+
+\clearpage
+\resetcounters
+\input{future}
+
+\clearpage
+
+% Below is for an appendix or appendices if you have them. If not just comment it all out
+
+%\pagestyle{empty}  % No page number on the half-title appendix page...okie dokie can do nmsu. (Note the page number count still increases, we're just printing the page number on the page.)
+
+%\begin{center}
+%APPENDICES
+% NMSU requires a half-title page that is labeled APPENDIX or APPENDICES (depending if you have 1 or 2+ appendix/appendices.) Yes, literally a whole page with nothing but this word, cause ya know, that makes sense...
+%\end{center}
+
+%\addtocontents{toc}{\protect\contentsline{}{}{}}  % Add an extra line before 'Appendices' in the table of contents
+%\appendix % Start the appendix
+
+%\clearpage
+%\resetcounters
+
+%\etocsettocdepth.toc {section}
+
+%\pagestyle{plain}  % Resume printing page numbers
+
+%\clearpage
+%\resetcounters
+%\input{appendix_mcfacts}
+
+%\clearpage
+%\resetcounters
+%\input{appendix_ocotillo}
+
+%% Repeat as many appendices as you need with
+% \clearpage
+% \resetcounters
+% \input{appendixX}
+
+
+%%% End of Appendices
+
+\setstretch{1}%\end{doublespace}
+
+\clearpage
+
+\nolinenumbers
+
+\singlespace
+\addcontentsline{toc}{section}{REFERENCES}  % This line makes sure that REFERENCES shows up in the table of contents with the correct page number
+\bibliographystyle{aasjournal}  % You can use any bibliography style you like, but hey, I like ApJ cause I'm used to it
+\bibliography{refs}  % Your bibtex file with all that lovely natbib info
+
+
+\end{document}
+

@@ -1,0 +1,278 @@
+\addtocontents{toc}{\protect}
+\section{\texorpdfstring{\MakeUppercase{ocotillo: post-processing radiative transfer model}}{ocotillo: post-processing radiative  transfer model}}
+\label{sec:Appendix-RTModel}
+
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+
+\subsection{Feautrier Radiative Transfer Method}
+\label{sec:Apdx-Feautrier}
+
+Here we show our derivation of the implicit Feautrier method used in our post-processing radiative transfer calculation which forms the core of the Ocotillo code.
+It is apropriate for the general case where extinction occurs via absorption and scattering processes.
+
+To begin, we adopt the two stream Eddington approximation for the radiation field by taking $\theta = 0$ (along z) and $\pi$ (opposite to z) in \eq{eqn:RadTrans}.
+This leads to a set of two equations for each stream: $\Iplus_\lambda$ upwards and $\Iminus_\lambda$ downwards, respectively.
+With $\alpha_\lambda = \rho(\kappa_\lambda + \sigma_\lambda)$,
+\begin{align} 
+    \frac{1}{\alpha_\lambda}\frac{d\Iplus_\lambda}{dz} &= -\Iplus_\lambda + S_\lambda \label{eqn:dIpdz}, \\
+    -\frac{1}{\alpha_\lambda}\frac{d\Iminus_\lambda}{dz} &= -\Iminus_\lambda + S_\lambda. \label{eqn:dImdz}
+\end{align}
+The effective source function $S_\lambda$ defined in \eq{eqn:effective_source} is composed of the Planck function
+\begin{equation}
+    B_{\lambda}(T) = \frac{2hc^2/\lambda^5}{\exp(hc/\lambda k T) - 1},
+\end{equation}
+and the mean intensity
+\begin{equation}
+    J_\lambda = \frac{1}{4\pi}\int I_\lambda d\Omega.
+\end{equation}
+We now drop the subscript $\lambda$ for clarity.
+Adding \eq{eqn:dIpdz} to \eq{eqn:dImdz}
+\begin{equation}\label{eqn:dIdz}
+    \frac{1}{\alpha}\frac{d(\Iplus + \Iminus)}{dz} = - (\Iplus - \Iminus).
+\end{equation}
+Dividing by two and defining the mean intensity as 
+\begin{equation}
+    U = \frac{\Iplus + \Iminus}{2}
+\end{equation}
+and the flux as
+\begin{equation}
+    V = \frac{\Iplus - \Iminus}{2},
+\end{equation}
+\eq{eqn:dIdz} simplifies to
+\begin{equation}\label{eqn:dUdz=-V}
+    \frac{1}{\alpha}\frac{dU}{dz} = -V.
+\end{equation}
+Subtracting \eq{eqn:dImdz} from \eq{eqn:dIpdz}
+\begin{equation}
+    \frac{1}{\alpha}\frac{d(\Iplus - \Iminus)}{dz} = - (\Iplus + \Iminus) + 2S.
+\end{equation}
+Again, dividing by two with the same substitutions and remembering the effective source function \eqp{eqn:effective_source},
+\begin{equation}
+    \frac{1}{\alpha}\frac{dV}{dz} = -U + (1-\omega) B + \omega J.
+\end{equation}
+In the two-stream approximation $J=U$ simplifing the previous equation further to
+\begin{equation}
+    \frac{1}{\alpha}\frac{dV}{dz} = -(1-\omega) U + (1-\omega) B. \\
+\end{equation}
+
+Now, we have two equations for the mean intensity $U$ and flux $V$
+\begin{align}
+    \frac{1}{\alpha}\frac{dU}{dz} =& -V; \label{eqn:dUdz} \\
+    \frac{1}{\alpha}\frac{dV}{dz} =& (1-\omega)(B-U). \label{eqn:dVdz}
+\end{align}
+Substituting $V$ into the second leaves one equation in $U$,
+\begin{equation}\label{eqn:ddU/ddz}
+    \frac{d}{dz} \left( \frac{1}{\alpha} \frac{dU}{dz} \right) = -\alpha(1-\omega)(B-U).
+\end{equation}
+
+Next, we discretize $U$ onto a uniform grid (i.e., $\Delta z =$ const).
+To evaluate the point $i$ using centered derivatives, we define the fluxes $\phi$ at the half-grid points
+\begin{equation}\label{eqn:U_i-discrete}
+    \frac{\Delta}{\Delta z} \left( \frac{1}{\alpha_i}\frac{\Delta U_i}{\Delta z} \right) = \frac{\phi_{i+\sfrac{1}{2}} - \phi_{i-\sfrac{1}{2}}}{\Delta z}
+\end{equation}
+where the fluxes at the cell interfaces $i\pm\sfrac{1}{2}$ are calculated using the forward and backward points
+\begin{eqnarray}
+    \phi_{i+\sfrac{1}{2}} = \frac{1}{\alpha_{i+\sfrac{1}{2}}} \frac{(\Uipone - \Ui)}{\Delta z}, \\
+    \phi_{i-\sfrac{1}{2}} = \frac{1}{\alpha_{i-\sfrac{1}{2}}} \frac{(\Ui - \Uimone)}{\Delta z}.
+\end{eqnarray}
+
+Using \eq{eqn:U_i-discrete} to relace the left-hand side of \eq{eqn:ddU/ddz}
+\begin{equation}
+      \frac{1}{\alpha_{i+\sfrac{1}{2}}} \frac{(\Uipone - \Ui)}{\Delta z} 
+    - \frac{1}{\alpha_{i-\sfrac{1}{2}}} \frac{(\Ui - \Uimone)}{\Delta z}  
+    = - \alpha_i (1 - \omega_i)(B_i - \Ui) \Delta z
+\end{equation}
+and collecting terms in $U$
+\begin{equation}
+    \frac{1}{\alpha_{i+\sfrac{1}{2}}} \Uipone - \left[ \frac{1}{\alpha_{i+\sfrac{1}{2}}}+ \frac{1}{\alpha_{i-\sfrac{1}{2}}} + \xi_i  \right] \Ui + \frac{1}{\alpha_{i-\sfrac{1}{2}}} \Uimone  = - \xi_i B_i,
+\end{equation}
+where $\xi_i = \alpha_i (1 - \omega_i) \Delta z^2$, we arrive at a form that can be constructed as a system of equations for each $i$ in matrix form with $\Ui$ along the diagonal and the $\Uimone$ and $\Uipone$ terms falling along the left and right off-diagonals, respectively, 
+\begin{equation}
+    a_i \Uipone + b_i \Ui + c_i \Uimone = d_i, \label{eqn:system-in-U_i}
+\end{equation}
+where
+\begin{eqnarray}
+    a_i &=& 1/\alpha_{i+\sfrac{1}{2}} \\
+    c_i &=& 1/\alpha_{i-\sfrac{1}{2}} \\
+    b_i &=& -a_i - c_i - \xi_i \\
+    d_i &=& - \xi_i B_i
+\end{eqnarray}
+This tridiagonal matrix can be solved using standard methods for the mean intensity at each point.
+Then, using \eq{eqn:dUdz=-V} we can solve for the flux $V$ and upwards $\Iplus$ and downwards $\Iminus$ intensities using the definitions for $U = \Iplus + \Iminus$ and $V = \Iplus - \Iminus$.
+
+The quantities at the domain boundaries represent the observable radiation field.
+The flux defined in the two-stream approximation is converted into the flux density by $F_\lambda = 2 \pi V_\lambda$.
+
+\subsubsection{Boundary Conditions}
+We set the radiation field at the vertical boundaries to be outflow only.
+Considering $U = (\Iplus + \Iminus) / 2$ and $V = (\Iplus + \Iminus) / 2$, outflow boundaires imply the lower boundary at $z=-L/2$ has an upward intensity $\Iplus=0$, such that $U(z=0) = \Iminus/2$ and $V(z=0)=-\Iminus/2$, and thus $U=-V$.
+
+In order to match the second order in $\Delta z$ we expanding $U$ close to the boundary in a Taylor series
+\begin{equation}
+    U_{\sfrac{1}{2}} = U_0 + \frac{\Delta \tau}{2} \left. \frac{dU}{d\tau} \right|_0 + \frac{\Delta \tau^2}{8} \left. \frac{d^2U}{d\tau^2}\right|_0
+\end{equation}
+Substituting $U_{\sfrac{1}{2}} = (U_0 + U_1)/2$,
+\begin{equation}
+    \frac{U_1 + U_2}{2} = U_0 + \frac{\Delta \tau}{2} \left. \frac{dU}{d\tau} \right|_0 + \frac{\Delta \tau^2}{8} \left. \frac{d^2U}{d\tau^2}\right|_0.
+\end{equation}
+Using \eq{eqn:dUdz} -- \eq{eqn:ddU/ddz}, we have the first and second derivatives of $U$ in $\tau$.
+Evaluating these at $z=0$
+\begin{align}
+    \left. \frac{dU}{d\tau} \right|_0 &= U_0 \text{  (since}\ U_0=-V_0 \text{ for } \Iplus=0), \\
+    \left. \frac{d^2U}{d\tau^2}\right|_0 &= (1-\omega_0)(U_0-B_0),
+\end{align}
+and the expression for $U_{\sfrac{1}{2}}$ becomes
+\begin{equation}
+    \frac{U_0 + U_1}{2} = U_0 + \frac{\Delta \tau}{2} U_0 + \frac{\Delta \tau^2}{8} (1-\omega_0)(U_0-B_0).
+\end{equation}
+Collecting terms in $U_i$
+\begin{equation}
+    U_0 \left[ -1-\Delta \tau - \frac{\Delta \tau^2}{4}(1-\omega_0) \right] + U_1 = - \frac{\Delta \tau^2}{4}(1-\omega_0)B_0.
+\end{equation}
+Reintroducing $\Delta \tau =\alpha \Delta z$,
+\begin{equation}
+    U_0 \left[ -1-\alpha_0\Delta z - \frac{\alpha_0^2\Delta z^2}{4}(1-\omega_0) \right] + U_1 = - \frac{\alpha_0^2\Delta z^2}{4}(1-\omega_0)B_0.
+\end{equation}
+Dividing by $\alpha_0$, the coefficients as defined in \eq{eqn:system-in-U_i} have the quantities
+\begin{eqnarray}
+    a_0 &=& 0, \\
+    b_0 &=& -1\left[ \frac{1}{\alpha_0} + \Delta z + \frac{\alpha_0 \Delta z^2}{4}(1-\omega_0) \right], \\
+    c_0 &=& 1/\alpha_{0}, \\
+    d_0 &=& - \frac{\alpha_0 \Delta z^2}{4}(1-\omega_0) B_0.
+\end{eqnarray}
+At the upper boundary $z=L/2$, the downward intensity $\Iminus=0$ leading to $U_N=V_N$.
+The same exercise as above results in the coefficients
+\begin{eqnarray}
+    a_N &=& 1/\alpha_N, \\
+    b_N &=& -1\left[ \frac{1}{\alpha_N} + \Delta z + \frac{\alpha_N \Delta z^2}{4}(1-\omega_N) \right], \\
+    c_N &=& 0, \\
+    d_N &=& - \frac{\alpha_N \Delta z^2}{4}(1-\omega_N) B_N.
+\end{eqnarray}
+We call attention here to an important subtelty, that the Taylor expansion near the boundary gives the coefficients the same order in $\alpha$ and $\Delta z$ as those for the rest of the domain.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\columnwidth]{appdx_figs/Feautrier_UVIpIm.png}
+	\caption[Feautrier Solutions]{Feautrier solutions from Ocotillo for the fiducial model \code{r1e3-z0h}.} 
+    \label{fig:feautrier_solution}
+\end{figure}
+
+Fig. \ref{fig:feautrier_solution} shows the results from solving for $U(z)$ and deriving $V(z)$, $\Iplus(z)$, and $\Iminus(z)$ with differnet lines corresponding to wavelength using the procedure described above applied to our fiducial model.
+
+\subsection{Opacity Sources}\label{sec:Apdx-Opacities}
+
+We calculate the continuous opacity with contributions from bound-free and free-free interactions with neutral hydrogen $\kappa({\rm H})$ and the negative hydrogen ion $\kappa({\rm H^-})$ and electron scattering $\kappa({\rm e})$ following \citet{Gray21}.
+We adopt their convention for representing the thermal gas energy $\theta = 5040/T\ {\rm eV}^{-1}$ where $T$ is the gas temperature.
+The neutral bound-free absorption is 
+\begin{equation}\label{eqn:kappaHIbf}
+    \kappa({\rm H_{bf}}) = \sigma_0 \lambda^3  \left[ \sum_{n=1}^{m-1} \frac{g_{\rm bf}}{n^3}10^{-\theta \chi_n} + \frac{\rm log_{10}(e)}{2\theta I} \left(10^{-\chi_m \theta} - 10^{-I\theta} \right) \right]
+\end{equation}
+where $\sigma_0 = 1.0449 \times 10^{-26}$ when $\lambda$ has units \AA, $\chi_{n} = I(1-1/n^2)$ eV is the excitation potential for a bound electron in level $n$, $I=13.598$ eV is the energy required to ionize an electron from the hydrogen atom in the ground state.
+The Uns\"old approximation is used for calculating contributioms from levels $m=[6, \infty)$ represented by the second term in the square brackets.
+
+The bound-free Gaunt factor $g_{\rm bf}$ is given by
+\begin{equation}\label{eqn:gauntHIbf}
+    g_{\rm bf} = 1 - \frac{0.3456}{(\lambda R)^{1/3}} \left( \frac{\lambda R}{n^2} - \frac{1}{2} \right)
+\end{equation}
+with $\lambda$ in \AA and the Rydberg constant for hydrogen $R = 1.09678 \times 10^{-3} / \lambda \ {\text{\AA}^{-1}}$ such that the product $\lambda R$ is dimensionless. Neutral hydrogen free-free absorption is
+\begin{equation}\label{eqn:kappaHIff}
+    \kappa({\rm H_{ff}}) = \sigma_0 \lambda^3 g_{\rm ff} \frac{\rm log_{10}(e)}{2\theta I} 10^{-I\theta}
+\end{equation}
+with $\lambda$ in units of \AA and where $\alpha_0$ is as above in Eqn. \ref{eqn:kappaHIbf}. The free-free Gaunt factor $g_{\rm ff}$ for hydrogen is
+\begin{equation}
+    g_{\rm ff} = 1 + \frac{0.3456}{(\lambda R)^{1/3}} \left( \frac{\rm log_{10}(e)}{\theta \chi_{\lambda}} + \frac{1}{2} \right)
+\end{equation}
+where $\chi_{\lambda} = 1.2398 \times 10^4 / \lambda$ eV, with $\lambda$ in units of \AA, is the photon energy.
+
+Negative hydrogen ions contribiutes substantially to the opacity in the solar photosphere.
+The photopsheric temperature of the \citet{SirkoGoodman03} disk at 1000 $\Rs$ roughly matches.
+We incorproate both the bound-free and free-free components to reproduce the proper disk opacitites.
+According to measurements by \citet{Wishart79}, the cross section to the bound-free component between 2250 \AA and 15\,000 \AA in units of $10^{-17}$ cm$^2$ per H$^-$ ion is
+\begin{equation}
+    \sigma_{\rm bf}(\rm H^-) = \sigma_0 + \sigma_1 \lambda + \sigma_2 \lambda^2 + \sigma_3 \lambda^3 + \sigma_4 \lambda^4 + \sigma_5 \lambda^5 + \sigma_6 \lambda^6.
+\end{equation}
+
+The stimulated emission is included and the constants have the values
+\begin{align}
+    \alpha_0 &= +0.1199654, \\
+    \alpha_1 &= -1.18267 \times 10^{-6}, \\
+    \alpha_2 &= +2.64243 \times 10^{-7}, \\
+    \alpha_3 &= -4.40524 \times 10^{-11}, \\
+    \alpha_4 &= +3.23992 \times 10^{-15}, \\
+    \alpha_5 &= -1.39568 \times 10^{-19}, \\
+    \alpha_6 &= +2.78701 \times 10^{-24}
+\end{align}
+when $\lambda$ is in \AA.
+Then, the bound-free opacity for the negative hydrogen ion is
+\begin{equation}
+    \kappa({\rm H^-_{bf}}) = 4.158 \times 10^{-10} \, \sigma({\rm H^-_{bf}}) \, P_{\rm e} \, \theta^{5/2} \, 10^{I\, \theta} \\
+\end{equation}
+where $P_{\rm e}$ is the partial electron pressure and with $I = 0.754$ eV.
+The numerical factor includes a conversion to units of cm$^{-2}$ per neutral hydrogen atom.
+
+Absorption due to the H$^{-}$ free-free process was measured by \citet{BellBerrington87} between 2600 and 113,900 \AA in the range $\theta = 0.5 - 2.0$ ($T = 10\,000 - 2500 K)$ and takes the form
+\begin{equation}
+    \kappa({\rm H_{ff}^-}) = 10^{-26} \, P_{\rm e} \, 10^{f_0 + f_1 \, \log_{10} \theta + f_2 \, \log_{10}^2 \theta}
+\end{equation}
+in units of cm$^2$ per neutral hydrogen atom, whch includes the stimulated emission factor. The $f_i$ components of the polynomial expression are
+\begin{align}
+    f_0 &= -2.2763 - 1.6850 \, \log_{10} \lambda + 0.76661 \, \log_{10}^2 \lambda - 0.0533464 \, \log_{10}^3 \lambda \\
+    f_1 &= +15.2827 - 9.2846 \, \log_{10} \lambda + 1.99381 \, \log_{10}^2 \lambda - 0.142631 \, \log_{10}^3 \lambda \\
+    f_2 &= -197.789 + 190.266 \, \log_{10} \lambda - 67.9775 \, \log_{10}^2 \lambda + 10.6913 \, \log_{10}^3 \lambda - 0.625151 \, \log_{10}^4 \lambda
+\end{align}
+when $\lambda$ is in \AA. The disk midplane and supernova are both fully ionized, and in this state electron scattering dominates.
+
+The scattering cross-section in units of cm$^{2}$ per hydrogen atom is 
+\begin{equation}
+\kappa(\text{e}^-) = 0.6648 \times 10^{-24} \frac{n_{\rm e}}{n_{\rm H}}  \\
+\end{equation}
+where $n_{\rm e}$ and $n_{\rm H}$ are the number densities of electrons and hydrogen atoms, respectively.
+
+Some of the expressions stated above were normalized per neutral hydrogen atom. We convert them into units of per hydrogen atom using Saha's equation to account for the ionization state. Thus, the total absorption coefficient we use in our radiative transfer calculation is 
+\begin{equation}
+	\label{eqn:total-kappa}
+	\kappa_{\lambda} = \biggl\{ \Bigl[ \kappa({\rm H_{bf}}) + \kappa({\rm H_{ff}}) + \kappa({\rm H^-_{bf}}) \Bigr] (1-10^{\chi_\lambda \theta}) + \kappa({\rm H_{ff}^-}) \biggr\} \times \frac{1}{1-n_{\rm HII}/n_{\rm HI}} + \kappa({\rm e^-})
+\end{equation}
+where $\chi_\lambda = 1.2398 \times 10^4/\lambda\text{eV}$ when $\lambda$ is in \AA.
+
+\begin{figure}
+\begin{subfigure}{0.3\textwidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{appdx_figs/opacity_w4473_0000.pdf}
+\end{subfigure}
+\begin{subfigure}{0.3\textwidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{appdx_figs/opacity_w4473_0013.pdf}
+\end{subfigure}
+\begin{subfigure}{0.3\textwidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{appdx_figs/opacity_w4473_0031.pdf}
+\end{subfigure}
+	\caption[Opacity profiles]{Opacity profiles from model \code{r1e3-z0h} showing contributions from each component in \eq{eqn:total-kappa} for the column passing through the center of the SN.
+	\textit{Left:} Initial conditions.
+	\textit{Center:} Snapshot when the lightcurve rapidly increases.
+	\textit{Right:} Last snapshot before the shock leaves the domain.}
+\label{fig:opacity-profiles}
+\end{figure}
+
+
+When the ionization fraction becomes large (i.e., $1 - n_\text{HII}/n_\text{HI}>10^{-2}$), we switch to using the following expression for the free-free absorption component as a function of frequency $\nu$
+\begin{equation}
+	\kappa_{\nu}(\text{H}_\text{ff}) \rho = \frac{4e^6}{3\, h\, c\, \me^2} \left( \frac{2\pi \me}{3kT} \right)^{1/2} \ \gff\, \nElec\, \nI\, Z^2\, \nu^{-3}\,\left[ 1 - \exp \left(-\frac{h\nu}{kT}\right) \right],
+\end{equation}
+where
+\begin{equation}
+    \gff \approx \rm{ln} \bigg( \exp \bigg\{ 5.960 - \frac{\sqrt{3}}{\pi} \ ln \bigg[ \frac{\nu}{10^9\ \rm{Hz}} \bigg( \frac{T}{10^4\ \rm{K}} \bigg)^{-3/2} \bigg] \bigg\} + e \bigg)
+\end{equation}
+is the Gaunt quantum mechanical correction factor, and the final term $e$ is Napier's constant.
+Since this expression is for absorption with units cm$^{-1}$, we take it out of \eq{eqn:total-kappa} and add it directly to our calculation of $\alpha_\lambda$. 
+
+\Fig{fig:opacity-profiles} shows the opacity profiles for our fiducial model \code{r1e3-z0h} for each term in \eq{eqn:total-kappa} at multiple points in time for the central wavelength in our range $\lambda=4473\,\text{\AA}$.
+The vertical dotted line shows the photosphere ($\tau=1$) when observed from the positive $z$-direction.
+At $t=0$ days, the disk midplane is dominated by $\kappa(\text{H}_\text{bf})$ and $\sigma_\text{e}$, but the disk photosphere at $z=5H$ is dominated by free-free absorption from $\kappa(\text{H}_\text{ff})$ and $\kappa(\text{H}_\text{ff}^-)$.
+At $t=31$ days when the SN shock passes $z=5H$ and the light curve in \Fig{fig:all_lcs} rises, $\kappa(\text{H}_\text{bf})$ becomes the dominant opacity source.
+At $t=76$ days, when the shock reaches the domain boundary, the opacity at the photosphere is still dominated by $\kappa(\Hminus_\text{bf})$ followed by $\kappa(\text{H}_\text{ff})$, which contributes a relatively small amount.
+
+While the lightcurve is turning over, the peak we recover is artificial due to the shock leaving the domain.
+
